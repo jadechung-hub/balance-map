@@ -4,558 +4,1179 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>조직관리 균형감 점검맵</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --accent: #f59e0b;
-    --bg: #f8fafc;
+    --navy: #1e3a5f;
+    --navy-deep: #15294a;
+    --navy-soft: #4a6a92;
+    --bg: #f6f5f0;
     --card: #ffffff;
-    --text: #1e293b;
-    --text-sub: #64748b;
-    --border: #e2e8f0;
-    --success: #10b981;
-    --danger: #ef4444;
-    --radius: 12px;
+    --border: #e3e1d8;
+    --text: #2a2a2a;
+    --muted: #6b6b6b;
+    --accent: #c9a961;
+    --shadow: 0 4px 24px rgba(30, 58, 95, 0.08);
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
-  .modal-overlay.hidden { display: none; }
-  .modal { background: var(--card); border-radius: var(--radius); padding: 32px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  .modal h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
-  .modal p { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 20px; }
-  .modal input { width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; margin-bottom: 12px; outline: none; transition: border-color 0.2s; }
-  .modal input:focus { border-color: var(--primary); }
-  .modal-btns { display: flex; gap: 8px; }
-  .btn { padding: 12px 20px; border-radius: 8px; border: none; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; flex: 1; }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-primary:hover { background: var(--primary-dark); }
-  .btn-secondary { background: var(--border); color: var(--text); }
-  .btn-secondary:hover { background: #cbd5e1; }
-  .btn-danger { background: var(--danger); color: white; }
-  .error-msg { color: var(--danger); font-size: 0.85rem; margin-bottom: 10px; display: none; }
-  header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-  .header-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
-  .header-user { font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: center; gap: 8px; }
-  .header-user button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; color: var(--text-sub); }
-  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
-  .section-card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid var(--border); }
-  .section-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--primary); color: white; border-radius: 50%; font-size: 0.85rem; font-weight: 700; margin-right: 10px; }
-  .section-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; margin-bottom: 16px; }
-  .area-block { margin-bottom: 20px; }
-  .area-label { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-  .area-desc { font-size: 0.82rem; color: var(--text-sub); margin-bottom: 10px; }
-  .score-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .score-input-wrap label { font-size: 0.8rem; color: var(--text-sub); display: block; margin-bottom: 4px; }
-  .score-input-wrap input[type=range] { width: 100%; accent-color: var(--primary); }
-  .score-display { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-sub); }
-  .score-val { font-size: 1.2rem; font-weight: 800; color: var(--primary); text-align: center; }
-  .chart-wrap { position: relative; width: 100%; max-width: 340px; margin: 0 auto; }
-  .chart-legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 0.82rem; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-  .gap-list { display: flex; flex-direction: column; gap: 10px; }
-  .gap-item { display: flex; align-items: center; gap: 12px; }
-  .gap-label { font-size: 0.85rem; font-weight: 600; width: 120px; flex-shrink: 0; }
-  .gap-bar-wrap { flex: 1; background: #f1f5f9; border-radius: 99px; height: 12px; overflow: hidden; }
-  .gap-bar { height: 100%; border-radius: 99px; background: var(--accent); transition: width 0.4s; }
-  .gap-val { font-size: 0.85rem; font-weight: 700; width: 36px; text-align: right; color: var(--text-sub); }
-  .reason-area { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; resize: vertical; min-height: 90px; font-family: inherit; outline: none; transition: border-color 0.2s; }
-  .reason-area:focus { border-color: var(--primary); }
-  .char-count { text-align: right; font-size: 0.8rem; color: var(--text-sub); margin-top: 4px; }
-  .action-item { margin-bottom: 16px; }
-  .action-item label { font-size: 0.88rem; font-weight: 600; display: block; margin-bottom: 6px; color: var(--text); }
-  .action-item input, .action-item textarea { width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; outline: none; transition: border-color 0.2s; resize: vertical; }
-  .action-item input:focus, .action-item textarea:focus { border-color: var(--primary); }
-  .action-divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
-  .submit-area { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-  .btn-submit { background: var(--primary); color: white; padding: 14px 28px; border-radius: 10px; border: none; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .btn-submit:hover { background: var(--primary-dark); transform: translateY(-1px); }
-  .btn-save { background: var(--bg); color: var(--text); padding: 14px 20px; border-radius: 10px; border: 2px solid var(--border); font-size: 0.95rem; font-weight: 600; cursor: pointer; }
-  .save-status { font-size: 0.82rem; color: var(--text-sub); margin-top: 10px; }
-  .admin-bar { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-  .admin-bar-left { font-size: 0.88rem; font-weight: 600; color: #92400e; }
-  .admin-bar-right { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn-admin-sm { padding: 7px 14px; border-radius: 7px; border: none; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
-  .btn-view { background: var(--primary); color: white; }
-  .btn-logout { background: #e5e7eb; color: #374151; }
-  .dashboard-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: flex; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
-  .dashboard-overlay.hidden { display: none; }
-  .dashboard { background: var(--card); border-radius: var(--radius); width: 100%; max-width: 800px; padding: 28px; }
-  .dashboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .dashboard-header h2 { font-size: 1.2rem; font-weight: 800; }
-  .dashboard-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-  .stat-box { background: var(--bg); border-radius: 10px; padding: 16px; text-align: center; }
-  .stat-num { font-size: 2rem; font-weight: 800; color: var(--primary); }
-  .stat-label { font-size: 0.8rem; color: var(--text-sub); margin-top: 4px; }
-  .submission-list { display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; }
-  .submission-item { border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-  .submission-name { font-weight: 700; font-size: 1rem; margin-bottom: 8px; display: flex; justify-content: space-between; }
-  .submission-name span { font-size: 0.8rem; color: var(--text-sub); font-weight: 400; }
-  .submission-scores { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-  .score-badge { background: var(--bg); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; }
-  .score-badge strong { color: var(--primary); }
-  .submission-reason { font-size: 0.85rem; color: var(--text-sub); background: var(--bg); border-radius: 6px; padding: 8px 12px; margin-bottom: 8px; }
-  .submission-actions-text { font-size: 0.83rem; color: var(--text); }
-  .btn-csv { background: var(--success); color: white; padding: 8px 16px; border-radius: 7px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-  .btn-del-all { background: var(--danger); color: white; padding: 8px 16px; border-radius: 7px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-  .btn-close { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 8px 16px; font-size: 0.85rem; cursor: pointer; }
-  .empty-state { text-align: center; padding: 40px; color: var(--text-sub); }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 99px; font-size: 0.9rem; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-  .toast.show { opacity: 1; }
-  .gap-highlight { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; font-weight: 600; color: #92400e; margin-bottom: 12px; }
-  footer { text-align: center; font-size: 0.78rem; color: var(--text-sub); padding: 20px; }
-  .btn-loading { opacity: 0.7; cursor: not-allowed; }
-  @media (max-width: 480px) {
-    .score-row { grid-template-columns: 1fr; }
-    .dashboard-stats { grid-template-columns: 1fr 1fr; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 32px 16px;
   }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 24px; position: relative; }
+  header h1 { font-size: 28px; color: var(--navy); font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+  header .subtitle { color: var(--muted); font-size: 15px; }
+
+  .user-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: white; border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 13px; color: var(--navy); margin-top: 12px; font-weight: 600;
+  }
+  .user-badge .change { color: var(--muted); font-size: 11px; cursor: pointer; text-decoration: underline; font-weight: 400; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; box-shadow: var(--shadow); }
+  .card h2 { color: var(--navy); font-size: 18px; font-weight: 700; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--navy); display: flex; align-items: center; gap: 8px; }
+  .card h2 .step { background: var(--navy); color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
+
+  .dimension { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px dashed var(--border); }
+  .dimension:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .dim-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .dim-name { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .dim-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+
+  .admin-input { width: 100%; border: 1.5px dashed var(--accent); background: #fffaef; border-radius: 6px; padding: 6px 10px; font-family: inherit; color: var(--navy); font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .admin-textarea { width: 100%; border: 1.5px dashed var(--accent); background: #fffaef; border-radius: 6px; padding: 8px 10px; font-family: inherit; color: var(--text); font-size: 12px; line-height: 1.5; min-height: 56px; resize: vertical; margin-bottom: 12px; }
+
+  .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .score-label { width: 90px; font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 6px; }
+  .score-label .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .score-label.current .dot { background: transparent; border: 1.5px dashed var(--navy-soft); }
+  .score-label.target .dot { background: var(--navy); }
+  .score-buttons { display: flex; gap: 4px; flex: 1; }
+  .score-btn { flex: 1; padding: 8px 0; border: 1px solid var(--border); background: white; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted); transition: all 0.15s; font-family: inherit; }
+  .score-btn:hover { border-color: var(--navy-soft); color: var(--navy); }
+  .score-btn.active.current { background: white; border: 2px dashed var(--navy); color: var(--navy); font-weight: 700; }
+  .score-btn.active.target { background: var(--navy); border-color: var(--navy); color: white; font-weight: 700; }
+
+  .chart-card { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+  .chart-wrapper { width: 100%; max-width: 480px; aspect-ratio: 1 / 1; }
+  .chart-wrapper svg { width: 100%; height: 100%; }
+  .legend { display: flex; gap: 24px; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-line { width: 28px; height: 0; border-top: 2px solid var(--navy); }
+  .legend-line.dashed { border-top-style: dashed; border-color: var(--navy-soft); }
+
+  .summary { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px 28px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .summary h2 { color: var(--navy); font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
+  .summary-item { background: var(--bg); border-radius: 10px; padding: 16px; text-align: center; }
+  .summary-item .name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .summary-item .gap { font-size: 28px; font-weight: 700; color: var(--navy); }
+  .summary-item .detail { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .summary-item.focus { background: var(--navy); color: white; position: relative; }
+  .summary-item.focus .name { color: rgba(255,255,255,0.75); }
+  .summary-item.focus .gap { color: white; }
+  .summary-item.focus .detail { color: rgba(255,255,255,0.85); }
+  .summary-item.focus::before { content: '우선 1순위'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; letter-spacing: 0.3px; }
+
+  .focus-callout { margin-top: 20px; padding: 18px 22px; background: linear-gradient(135deg, #fffaef 0%, #fdf3d9 100%); border-left: 4px solid var(--accent); border-radius: 10px; color: var(--navy-deep); line-height: 1.6; }
+  .focus-callout .callout-title { font-size: 13px; font-weight: 700; color: #8a6c1f; margin-bottom: 6px; letter-spacing: 0.3px; }
+  .focus-callout .callout-msg { font-size: 15px; font-weight: 500; }
+  .focus-callout .callout-msg strong { color: var(--navy); font-weight: 800; background: rgba(201, 169, 97, 0.25); padding: 1px 6px; border-radius: 4px; }
+  .focus-callout.empty { background: var(--bg); border-left-color: var(--border); color: var(--muted); }
+  .focus-callout.empty .callout-title { color: var(--muted); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; color: var(--navy); font-weight: 600; margin-bottom: 6px; }
+  .form-group .hint { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 6px; }
+  .form-input, .form-textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 14px; color: var(--text); background: white; transition: border 0.15s; resize: vertical; }
+  .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--navy); }
+  .form-textarea { min-height: 70px; line-height: 1.5; }
+  .form-textarea.large { min-height: 160px; }
+
+  .reason-card .reason-row { display: flex; gap: 8px; align-items: stretch; }
+  .reason-card .reason-row input { flex: 1; }
+  .reason-card .reason-context { background: var(--bg); padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; color: var(--text); }
+  .reason-card .reason-context strong { color: var(--navy); font-weight: 700; background: rgba(201, 169, 97, 0.25); padding: 1px 6px; border-radius: 4px; }
+
+  .char-counter { font-size: 11px; color: var(--muted); text-align: right; margin-top: 4px; }
+  .char-counter.warn { color: #c0392b; }
+  .char-counter.ok { color: #2d8659; }
+
+  .activity-h3 { color: var(--navy); font-size: 15px; font-weight: 700; margin-bottom: 14px; padding: 6px 12px; background: var(--bg); border-radius: 6px; display: inline-block; }
+
+  .target-date-banner { background: linear-gradient(135deg, #1e3a5f 0%, #4a6a92 100%); color: white; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .target-date-banner strong { font-size: 14px; }
+
+  .submission-info { background: #eef5ee; border-left: 4px solid #2d8659; padding: 14px 18px; border-radius: 8px; margin-top: 12px; font-size: 13px; color: #1f5f3f; line-height: 1.6; }
+  .submission-info strong { color: #134d2c; }
+
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+  .btn { padding: 12px 22px; border-radius: 10px; border: 1px solid var(--navy); background: white; color: var(--navy); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .btn:hover { background: var(--navy); color: white; }
+  .btn.primary { background: var(--navy); color: white; }
+  .btn.primary:hover { background: var(--navy-deep); }
+  .btn.accent { border-color: var(--accent); color: #8a6c1f; }
+  .btn.accent:hover { background: var(--accent); color: white; }
+  .btn.ghost { border: none; background: transparent; color: var(--muted); font-size: 12px; padding: 6px 10px; }
+  .btn.ghost:hover { background: transparent; color: var(--navy); text-decoration: underline; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--navy); color: white; padding: 12px 24px; border-radius: 10px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: transform 0.3s; z-index: 200; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 32px; display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .copyright { text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--navy-soft); font-size: 11px; letter-spacing: 0.4px; }
+  .copyright strong { color: var(--navy); font-weight: 700; }
+
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(21, 41, 74, 0.55); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+  .modal { background: white; border-radius: 16px; padding: 32px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal h3 { color: var(--navy); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .modal p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .modal label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+  .modal input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 15px; font-family: inherit; margin-bottom: 16px; transition: border 0.15s; }
+  .modal input:focus { outline: none; border-color: var(--navy); }
+  .modal .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal .error { color: #c0392b; font-size: 12px; margin-top: -10px; margin-bottom: 12px; min-height: 14px; }
+
+  .admin-banner { background: var(--accent); color: white; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .admin-banner .banner-actions { display: flex; gap: 8px; }
+  .admin-banner button { background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 600; }
+  .admin-banner button:hover { background: rgba(255,255,255,0.4); }
+
+  .hidden { display: none !important; }
+
+  .dash-backdrop { position: fixed; inset: 0; background: rgba(21, 41, 74, 0.6); display: flex; align-items: flex-start; justify-content: center; z-index: 300; padding: 24px 16px; overflow-y: auto; }
+  .dash-panel { background: white; border-radius: 16px; width: 100%; max-width: 900px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; margin: auto; }
+  .dash-header { background: var(--navy); color: white; padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .dash-header h2 { font-size: 18px; font-weight: 700; margin: 0; }
+  .dash-header .dash-meta { font-size: 13px; opacity: 0.75; margin-top: 2px; }
+  .dash-header-actions { display: flex; gap: 8px; }
+  .dash-header-actions button { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .dash-header-actions button:hover { background: rgba(255,255,255,0.28); }
+  .dash-body { padding: 24px 28px; }
+  .dash-empty { text-align: center; padding: 48px 0; color: var(--muted); font-size: 15px; }
+
+  .sub-card { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .sub-card-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: var(--bg); cursor: pointer; gap: 12px; flex-wrap: wrap; user-select: none; }
+  .sub-card-header:hover { background: #eeece5; }
+  .sub-name { font-size: 15px; font-weight: 700; color: var(--navy); }
+  .sub-date { font-size: 12px; color: var(--muted); }
+  .sub-scores { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sub-score-pill { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 3px 10px; font-size: 12px; color: var(--navy); font-weight: 600; white-space: nowrap; }
+  .sub-score-pill.focus { background: var(--navy); color: white; border-color: var(--navy); }
+  .sub-toggle { font-size: 18px; color: var(--muted); transition: transform 0.2s; }
+  .sub-toggle.open { transform: rotate(180deg); }
+  .sub-card-body { padding: 18px 20px; border-top: 1px solid var(--border); display: none; }
+  .sub-card-body.open { display: block; }
+  .sub-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  @media (max-width: 600px) { .sub-detail-grid { grid-template-columns: 1fr; } }
+  .sub-detail-item { font-size: 13px; line-height: 1.6; }
+  .sub-detail-item .label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .sub-detail-item .value { color: var(--text); }
+  .sub-detail-item .value.empty { color: #ccc; font-style: italic; }
+  .sub-letter-box { background: var(--bg); border-radius: 8px; padding: 14px 16px; font-size: 13px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: keep-all; margin-top: 6px; }
+
+  .dash-toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+  .dash-toolbar input { flex: 1; min-width: 180px; padding: 9px 13px; border: 1.5px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 14px; color: var(--text); }
+  .dash-toolbar input:focus { outline: none; border-color: var(--navy); }
+  .dash-count { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+  /* 로딩 스피너 */
+  .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; z-index: 999; }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<div class="modal-overlay" id="entryModal">
-  <div class="modal">
-    <h3>입장하기</h3>
-    <p>이름과 입장 암호를 입력해주세요.</p>
-    <input type="text" id="entryName" placeholder="이름" maxlength="20">
-    <input type="password" id="entryPw" placeholder="입장 암호">
-    <div class="error-msg" id="entryError">이름 또는 암호가 올바르지 않습니다.</div>
-    <div class="modal-btns">
-      <button class="btn btn-primary" onclick="handleEntry()">입장하기</button>
-    </div>
-    <div style="margin-top:16px; text-align:center;">
-      <button style="background:none;border:none;font-size:0.8rem;color:var(--text-sub);cursor:pointer;" onclick="showAdminModal()">관리자 로그인</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay hidden" id="adminModal">
-  <div class="modal">
-    <h3>관리자 로그인</h3>
-    <p>관리자 이메일과 비밀번호를 입력하세요.</p>
-    <input type="email" id="adminEmail" placeholder="이메일" autocomplete="username">
-    <input type="password" id="adminPw" placeholder="비밀번호" autocomplete="current-password">
-    <div class="error-msg" id="adminError">이메일 또는 비밀번호가 올바르지 않습니다.</div>
-    <div class="modal-btns">
-      <button class="btn btn-secondary" onclick="hideAdminModal()">취소</button>
-      <button class="btn btn-primary" id="adminLoginBtn" onclick="handleAdminLogin()">로그인</button>
-    </div>
-  </div>
-</div>
-
-<div class="dashboard-overlay hidden" id="dashboardOverlay">
-  <div class="dashboard">
-    <div class="dashboard-header">
-      <h2>📋 제출 현황 대시보드</h2>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn-csv" onclick="exportCSV()">CSV 내보내기</button>
-        <button class="btn-del-all" onclick="deleteAll()">전체 삭제</button>
-        <button class="btn-close" onclick="closeDashboard()">닫기 ✕</button>
+  <!-- 참석자 입장 모달 -->
+  <div class="modal-backdrop" id="participant-modal">
+    <div class="modal">
+      <h3>입장하기</h3>
+      <p>이름과 입장 암호를 입력해주세요.</p>
+      <label for="participant-name">이름</label>
+      <input type="text" id="participant-name" placeholder="예: 홍길동" autocomplete="off">
+      <label for="participant-pw">입장 암호</label>
+      <input type="password" id="participant-pw" placeholder="입장 암호" autocomplete="off">
+      <div class="error" id="participant-error"></div>
+      <div class="modal-actions">
+        <button class="btn primary" id="participant-submit">입장하기</button>
       </div>
     </div>
-    <div class="dashboard-stats">
-      <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-label">총 제출 수</div></div>
-      <div class="stat-box"><div class="stat-num" id="statAvgCurrent">-</div><div class="stat-label">현재 수준 평균</div></div>
-      <div class="stat-box"><div class="stat-num" id="statAvgFuture">-</div><div class="stat-label">미래 목표 평균</div></div>
-    </div>
-    <div class="submission-list" id="submissionList">
-      <div class="empty-state">제출 데이터를 불러오는 중...</div>
-    </div>
   </div>
-</div>
 
-<div class="toast" id="toast"></div>
+  <!-- 이름 변경 모달 -->
+  <div class="modal-backdrop hidden" id="name-modal">
+    <div class="modal">
+      <h3>이름 변경</h3>
+      <p>새 이름을 입력하면 작성 내용이 초기화됩니다.</p>
+      <label for="name-input">이름</label>
+      <input type="text" id="name-input" placeholder="예: 홍길동" autocomplete="off">
+      <div class="error" id="name-error"></div>
+      <div class="modal-actions">
+        <button class="btn" id="name-cancel">취소</button>
+        <button class="btn primary" id="name-submit">변경하기</button>
+      </div>
+    </div>
+  </div>
 
-<header>
-  <div class="header-title">분석맵</div>
-  <div class="header-user">
-    <span id="headerUserName">-</span>
-    <button onclick="changeName()">변경</button>
+  <!-- 관리자 로그인 모달 -->
+  <div class="modal-backdrop hidden" id="admin-modal">
+    <div class="modal">
+      <h3>관리자 로그인</h3>
+      <p>관리자 비밀번호를 입력하면 영역 제목·설명을 수정할 수 있습니다.</p>
+      <label for="admin-pw">비밀번호</label>
+      <input type="password" id="admin-pw" placeholder="비밀번호" autocomplete="off">
+      <div class="error" id="admin-error"></div>
+      <div class="modal-actions">
+        <button class="btn" id="admin-cancel">취소</button>
+        <button class="btn primary" id="admin-submit">로그인</button>
+      </div>
+    </div>
   </div>
-</header>
 
-<main id="mainContent" style="display:none;">
-  <div class="admin-bar hidden" id="adminBar">
-    <div class="admin-bar-left">🔧 관리자 모드</div>
-    <div class="admin-bar-right">
-      <button class="btn-admin-sm btn-view" onclick="openDashboard()">📋 제출 현황 보기</button>
-      <button class="btn-admin-sm btn-logout" onclick="adminLogout()">로그아웃</button>
+  <!-- 비밀번호 변경 모달 -->
+  <div class="modal-backdrop hidden" id="pw-change-modal">
+    <div class="modal">
+      <h3 id="pw-change-title">비밀번호 변경</h3>
+      <p id="pw-change-desc">새 비밀번호를 입력하세요. (4자 이상)</p>
+      <label for="new-pw">새 비밀번호</label>
+      <input type="password" id="new-pw" autocomplete="off">
+      <label for="new-pw2">비밀번호 확인</label>
+      <input type="password" id="new-pw2" autocomplete="off">
+      <div class="error" id="pw-change-error"></div>
+      <div class="modal-actions">
+        <button class="btn" id="pw-change-cancel">취소</button>
+        <button class="btn primary" id="pw-change-submit">변경</button>
+      </div>
     </div>
   </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">1</span> 점수 입력</div>
-    <div id="areasContainer"></div>
-  </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">2</span> 균형감 점검맵</div>
-    <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
-    <div class="chart-legend">
-      <div><span class="legend-dot" style="background:#3b82f6;"></span>현재 수준</div>
-      <div><span class="legend-dot" style="background:#f59e0b;"></span>미래의 나의 모습</div>
-    </div>
-    <div style="margin-top:20px;">
-      <div style="font-size:0.95rem;font-weight:700;margin-bottom:12px;">영역별 갭 분석 — 개선 우선순위</div>
-      <div class="gap-list" id="gapList"></div>
-    </div>
-  </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">3</span> 가장 큰 갭, 왜 그렇게 생각하시나요?</div>
-    <div class="gap-highlight hidden" id="biggestGapLabel"></div>
-    <textarea class="reason-area" id="reasonText" placeholder="이유를 입력해주세요." maxlength="500" oninput="updateCharCount()"></textarea>
-    <div class="char-count"><span id="charCount">0</span> / 500자</div>
-  </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">4</span> 향후 나의 활동</div>
-    <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">활동 1 — 현장 적용 액션</div>
-    <div class="action-item">
-      <label>1. 무엇을 당장 내일부터 실천할지</label>
-      <input type="text" id="action1" placeholder="구체적으로 입력해주세요">
-    </div>
-    <div class="action-item">
-      <label>2. 언제까지 완료할지</label>
-      <input type="text" id="action2" placeholder="예: 2주 이내, 이번 달 말까지">
-    </div>
-    <div class="action-item">
-      <label>3. 누구에게 도움을 요청할지</label>
-      <input type="text" id="action3" placeholder="예: 팀장님, 동료 OOO">
-    </div>
-    <hr class="action-divider">
-    <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">활동 2 — 나에게 쓰는 편지</div>
-    <div class="action-item">
-      <label>90일 뒤 나에게 쓰는 편지 (선택사항)</label>
-      <textarea id="letter" placeholder="미래의 나에게..." rows="5"></textarea>
-    </div>
-    <div class="action-item">
-      <label>이메일 주소 (선택사항)</label>
-      <input type="email" id="email" placeholder="your@email.com">
-    </div>
-    <div class="submit-area">
-      <button class="btn-submit" onclick="submitAll()">제출하기</button>
-      <button class="btn-save" onclick="saveLocal()">임시 저장</button>
-    </div>
-    <div class="save-status" id="saveStatus">마지막 저장: 없음</div>
-  </div>
-</main>
 
-<footer>© re:Box Consulting · Proprietary · 무단배포금지</footer>
+  <!-- 관리자 제출 대시보드 -->
+  <div class="dash-backdrop hidden" id="dash-backdrop">
+    <div class="dash-panel">
+      <div class="dash-header">
+        <div>
+          <h2>📋 제출 현황 대시보드</h2>
+          <div class="dash-meta" id="dash-meta">총 0명 제출</div>
+        </div>
+        <div class="dash-header-actions">
+          <button id="dash-export-csv">CSV 내보내기</button>
+          <button id="dash-clear">전체 삭제</button>
+          <button id="dash-close">닫기 ✕</button>
+        </div>
+      </div>
+      <div class="dash-body">
+        <div class="dash-toolbar">
+          <input type="text" id="dash-search" placeholder="이름으로 검색…">
+          <span class="dash-count" id="dash-count"></span>
+        </div>
+        <div id="dash-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1 id="page-title">분석맵</h1>
+      <p class="subtitle" id="page-subtitle">현재 수준과 미래의 나의 모습</p>
+      <div class="user-badge" id="user-badge">
+        <span>응답자: <strong id="user-name">-</strong></span>
+        <span class="change" id="change-name">변경</span>
+      </div>
+    </header>
+
+    <div class="admin-banner hidden" id="admin-banner">
+      <span>🔧 관리자 모드 — 각 영역의 제목과 설명을 수정할 수 있습니다.</span>
+      <div class="banner-actions">
+        <button id="open-dash-btn">📋 제출 현황 보기</button>
+        <button id="save-admin-edits">변경사항 저장</button>
+        <button id="change-pw-btn">관리자 암호 변경</button>
+        <button id="change-participant-pw-btn">참석자 암호 변경</button>
+        <button id="admin-logout">로그아웃</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2><span class="step">1</span> 점수 입력</h2>
+        <div id="dimensions-container"></div>
+      </div>
+      <div class="card chart-card">
+        <h2 style="align-self: flex-start;"><span class="step">2</span> 균형감 점검맵</h2>
+        <div class="chart-wrapper">
+          <svg id="chart" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-line dashed"></span>현재 수준</div>
+          <div class="legend-item"><span class="legend-line"></span>미래의 나의 모습</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h2>영역별 갭 분석</h2>
+      <div class="summary-grid" id="summary"></div>
+      <div class="focus-callout empty" id="focus-callout">
+        <div class="callout-title">개선 우선순위</div>
+        <div class="callout-msg">현재 수준과 미래 목표를 모두 입력하면, 앞으로의 개선 우선순위를 안내해 드립니다.</div>
+      </div>
+    </div>
+
+    <div class="card reason-card" style="margin-bottom: 24px;">
+      <h2><span class="step">3</span> 가장 큰 갭, 왜 그렇게 생각하시나요?</h2>
+      <div class="reason-context" id="reason-context">세 영역의 점수를 모두 입력하면 가장 갭이 큰 영역이 표시됩니다.</div>
+      <div class="reason-row">
+        <input type="text" class="form-input" id="reason-input" placeholder="10자 이상 작성해주세요" disabled>
+        <button class="btn primary" id="reason-submit" disabled>제출</button>
+      </div>
+      <div class="char-counter" id="reason-counter">0 / 10자</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 24px;">
+      <h2><span class="step">4</span> 향후 나의 활동</h2>
+      <div class="activity-h3">활동 1 — 현장 적용 액션</div>
+      <div class="form-group">
+        <label>1. 무엇을 당장 내일부터 실천할지</label>
+        <textarea class="form-textarea" id="action-what" placeholder="구체적인 첫 실천 행동을 적어주세요"></textarea>
+      </div>
+      <div class="form-group">
+        <label>2. 언제까지 완료할지</label>
+        <input type="date" class="form-input" id="action-when" style="max-width: 220px;">
+      </div>
+      <div class="form-group" style="margin-bottom: 28px;">
+        <label>3. 이것이 실현되려면 누구에게 도움을 요청할지</label>
+        <textarea class="form-textarea" id="action-who" placeholder="이름·역할·요청할 도움의 내용"></textarea>
+      </div>
+      <div class="activity-h3">활동 2 — 나에게 쓰는 편지</div>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">
+        90일 뒤에 받고 싶은 나에게 쓰는 편지를 자유롭게 작성해보세요. <span style="color: var(--navy);">(선택사항)</span>
+      </p>
+      <div class="form-group">
+        <textarea class="form-textarea large" id="letter" placeholder="오늘의 다짐을 미래의 나에게 전해주세요…"></textarea>
+        <div class="char-counter" id="letter-counter">0자</div>
+      </div>
+      <div class="form-group">
+        <label>이메일 주소 <span class="hint">선택사항 — 입력 시 90일 뒤 편지를 이메일로 받을 수 있습니다</span></label>
+        <input type="email" class="form-input" id="user-email" placeholder="example@company.com">
+      </div>
+      <div class="target-date-banner" id="target-date-banner" style="display: none;">
+        <span>📅 이메일 입력 시 받기로 약속한 날: <strong id="target-date-text">-</strong></span>
+        <span>본인 이메일 + rebox@rebox.asia로 발송</span>
+      </div>
+      <div style="margin-top: 20px; text-align: center;">
+        <button class="btn primary" id="btn-final-submit" style="padding: 14px 36px; font-size: 15px;">제출하기</button>
+      </div>
+      <div class="submission-info" id="submission-info" style="display: none;"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" id="btn-save">일부 저장</button>
+      <button class="btn" id="btn-png">전체 리포트 이미지 다운로드</button>
+      <button class="btn" id="btn-share">링크 공유</button>
+      <button class="btn" id="btn-reset">초기화</button>
+    </div>
+
+    <div id="report-container" style="position: fixed; left: -9999px; top: 0; width: 1000px; background: #f6f5f0; padding: 50px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; color: #2a2a2a;"></div>
+
+    <footer>
+      <span>마지막 저장: <span id="last-saved">없음</span></span>
+      <span>·</span>
+      <button class="btn ghost" id="open-admin">관리자 로그인</button>
+    </footer>
+    <div class="copyright">© <strong>re:Box Consulting</strong> Proprietary &nbsp;·&nbsp; 무단배포금지</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
-const ATTENDEE_PW = 'spider';
+  // ========== Supabase 설정 ==========
+  // ⚠️ anon key를 받으면 아래 YOUR_ANON_KEY_HERE 부분만 교체하세요
+  const SUPABASE_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
+  const SUPABASE_TABLE = 'submissions';
 
-const AREAS = [
-  { key: 'area1', label: '목표 관리', desc: '팀의 목표를 명확히 설정하고 달성을 촉진하는 역량' },
-  { key: 'area2', label: '관계 관리', desc: '팀원과의 신뢰 관계를 구축하고 유지하는 역량' },
-  { key: 'area3', label: '성과 관리', desc: '성과를 측정하고 피드백으로 발전을 이끄는 역량' },
-];
-
-let state = { userName: '', isAdmin: false, adminToken: null, scores: {} };
-
-async function sbFetch(path, options = {}) {
-  const headers = {
-    'apikey': SUPABASE_KEY,
-    'Authorization': `Bearer ${state.adminToken || SUPABASE_KEY}`,
-    'Content-Type': 'application/json',
-    'Prefer': options.prefer || 'return=representation',
-    ...(options.headers || {}),
-  };
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers });
-  if (!res.ok) { const err = await res.text(); throw new Error(err); }
-  return options.noJson ? res : res.json();
-}
-
-async function supabaseAuthSignIn(email, password) {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-    method: 'POST',
-    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
-  if (!res.ok) throw new Error('인증 실패');
-  return res.json();
-}
-
-async function supabaseAuthSignOut(token) {
-  await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-    method: 'POST',
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` },
-  });
-}
-
-async function insertSubmission(data) {
-  return sbFetch('submissions', { method: 'POST', body: JSON.stringify(data), prefer: 'return=minimal', noJson: true });
-}
-async function fetchSubmissions() {
-  return sbFetch('submissions?select=*&order=created_at.desc');
-}
-async function deleteAllSubmissions() {
-  return sbFetch('submissions?id=neq.null', { method: 'DELETE', noJson: true });
-}
-
-function init() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('new') === '1') {
-    localStorage.clear();
-    sessionStorage.clear();
-  }
-  state.isAdmin = false;
-  state.adminToken = null;
-  state.userName = '';
-  renderAreas();
-  initChart();
-  document.getElementById('entryModal').classList.remove('hidden');
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('adminBar').classList.add('hidden');
-  document.getElementById('entryPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleEntry(); });
-  document.getElementById('adminPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleAdminLogin(); });
-}
-
-function renderAreas() {
-  const container = document.getElementById('areasContainer');
-  container.innerHTML = AREAS.map(area => `
-    <div class="area-block">
-      <div class="area-label">${area.label}</div>
-      <div class="area-desc">${area.desc}</div>
-      <div class="score-row">
-        <div class="score-input-wrap">
-          <label>현재 수준</label>
-          <div class="score-val" id="${area.key}_c_val">5</div>
-          <input type="range" min="1" max="10" value="5" id="${area.key}_c" oninput="onScore('${area.key}','current',this.value)">
-          <div class="score-display"><span>1</span><span>10</span></div>
-        </div>
-        <div class="score-input-wrap">
-          <label>미래의 나의 모습</label>
-          <div class="score-val" id="${area.key}_f_val">7</div>
-          <input type="range" min="1" max="10" value="7" id="${area.key}_f" oninput="onScore('${area.key}','future',this.value)">
-          <div class="score-display"><span>1</span><span>10</span></div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-  AREAS.forEach(a => { state.scores[a.key] = { current: 5, future: 7 }; });
-}
-
-let radarChart;
-function initChart() {
-  const ctx = document.getElementById('radarChart').getContext('2d');
-  radarChart = new Chart(ctx, {
-    type: 'radar',
-    data: {
-      labels: AREAS.map(a => a.label),
-      datasets: [
-        { label: '현재 수준', data: AREAS.map(() => 5), backgroundColor: 'rgba(59,130,246,0.15)', borderColor: '#3b82f6', pointBackgroundColor: '#3b82f6', borderWidth: 2 },
-        { label: '미래의 나의 모습', data: AREAS.map(() => 7), backgroundColor: 'rgba(245,158,11,0.15)', borderColor: '#f59e0b', pointBackgroundColor: '#f59e0b', borderWidth: 2 }
-      ]
-    },
-    options: { responsive: true, scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }, plugins: { legend: { display: false } } }
-  });
-}
-
-function updateChart() {
-  radarChart.data.datasets[0].data = AREAS.map(a => state.scores[a.key]?.current ?? 5);
-  radarChart.data.datasets[1].data = AREAS.map(a => state.scores[a.key]?.future ?? 7);
-  radarChart.update();
-  updateGap();
-}
-
-function updateGap() {
-  const gaps = AREAS.map(a => ({ label: a.label, key: a.key, gap: (state.scores[a.key]?.future ?? 7) - (state.scores[a.key]?.current ?? 5) }));
-  const maxGap = Math.max(...gaps.map(g => g.gap));
-  const maxGapArea = gaps.find(g => g.gap === maxGap);
-  document.getElementById('gapList').innerHTML = gaps.sort((a,b) => b.gap - a.gap).map(g => `
-    <div class="gap-item">
-      <div class="gap-label">${g.label}</div>
-      <div class="gap-bar-wrap"><div class="gap-bar" style="width:${Math.max(0,g.gap)/9*100}%"></div></div>
-      <div class="gap-val">${g.gap > 0 ? '+'+g.gap : g.gap}</div>
-    </div>
-  `).join('');
-  const biggestLabel = document.getElementById('biggestGapLabel');
-  if (maxGap > 0 && maxGapArea) { biggestLabel.textContent = `🎯 가장 큰 갭: ${maxGapArea.label} (갭 +${maxGap})`; biggestLabel.classList.remove('hidden'); }
-  else { biggestLabel.classList.add('hidden'); }
-}
-
-function onScore(areaKey, type, val) {
-  val = parseInt(val);
-  if (!state.scores[areaKey]) state.scores[areaKey] = { current: 5, future: 7 };
-  state.scores[areaKey][type] = val;
-  document.getElementById(areaKey + (type === 'current' ? '_c_val' : '_f_val')).textContent = val;
-  updateChart();
-}
-
-function updateCharCount() {
-  document.getElementById('charCount').textContent = document.getElementById('reasonText').value.length;
-}
-
-function saveLocal() {
-  localStorage.setItem('bm_draft_' + state.userName, JSON.stringify(gatherData()));
-  document.getElementById('saveStatus').textContent = `마지막 저장: ${new Date().toLocaleTimeString('ko-KR')}`;
-  showToast('임시 저장되었습니다.');
-}
-
-function loadLocal() {
-  if (!state.userName) return;
-  const raw = localStorage.getItem('bm_draft_' + state.userName);
-  if (!raw) return;
-  try {
-    const data = JSON.parse(raw);
-    AREAS.forEach(a => {
-      if (data.scores?.[a.key]) {
-        state.scores[a.key] = data.scores[a.key];
-        document.getElementById(a.key + '_c').value = data.scores[a.key].current;
-        document.getElementById(a.key + '_f').value = data.scores[a.key].future;
-        document.getElementById(a.key + '_c_val').textContent = data.scores[a.key].current;
-        document.getElementById(a.key + '_f_val').textContent = data.scores[a.key].future;
-      }
+  async function sbFetch(method, path, body) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      method,
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
+      },
+      body: body ? JSON.stringify(body) : undefined
     });
-    if (data.reason) document.getElementById('reasonText').value = data.reason;
-    if (data.action1) document.getElementById('action1').value = data.action1;
-    if (data.action2) document.getElementById('action2').value = data.action2;
-    if (data.action3) document.getElementById('action3').value = data.action3;
-    if (data.letter) document.getElementById('letter').value = data.letter;
-    if (data.email) document.getElementById('email').value = data.email;
-    updateChart(); updateCharCount();
-  } catch(e) {}
-}
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err);
+    }
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  }
 
-function gatherData() {
-  return {
-    name: state.userName,
-    scores: JSON.parse(JSON.stringify(state.scores)),
-    reason: document.getElementById('reasonText').value,
-    action1: document.getElementById('action1').value,
-    action2: document.getElementById('action2').value,
-    action3: document.getElementById('action3').value,
-    letter: document.getElementById('letter').value,
-    email: document.getElementById('email').value,
+  // Supabase에서 전체 제출 목록 가져오기
+  async function getAllSubmissions() {
+    try {
+      const data = await sbFetch('GET', `${SUPABASE_TABLE}?order=submitted_at.desc`);
+      return data || [];
+    } catch (e) {
+      console.warn('Supabase 조회 실패, localStorage fallback:', e);
+      try { return JSON.parse(localStorage.getItem('orgAllSubmissions') || '[]'); } catch { return []; }
+    }
+  }
+
+  // Supabase에 제출 데이터 저장
+  async function saveSubmission(submission) {
+    try {
+      await sbFetch('POST', SUPABASE_TABLE, {
+        submitted_at: submission.submittedAt,
+        target_date: submission.targetDate,
+        user_name: submission.userName,
+        state: submission.state,
+        extras: submission.extras,
+        focus_key: submission.focusKey || '',
+        focus_key_name: submission.focusKeyName || ''
+      });
+      return true;
+    } catch (e) {
+      console.warn('Supabase 저장 실패, localStorage fallback:', e);
+      const all = JSON.parse(localStorage.getItem('orgAllSubmissions') || '[]');
+      all.push(submission);
+      localStorage.setItem('orgAllSubmissions', JSON.stringify(all));
+      return false;
+    }
+  }
+
+  // Supabase에서 특정 사용자 이름으로 가장 최근 데이터 가져오기
+  async function loadUserData(name) {
+    try {
+      const data = await sbFetch('GET', `${SUPABASE_TABLE}?user_name=eq.${encodeURIComponent(name)}&order=submitted_at.desc&limit=1`);
+      return (data && data.length > 0) ? data[0] : null;
+    } catch (e) {
+      console.warn('사용자 데이터 로드 실패:', e);
+      return null;
+    }
+  }
+
+  // Supabase에서 전체 삭제
+  async function clearAllSubmissions() {
+    try {
+      await sbFetch('DELETE', `${SUPABASE_TABLE}?id=gte.0`);
+      return true;
+    } catch (e) {
+      console.warn('Supabase 삭제 실패:', e);
+      return false;
+    }
+  }
+
+  // ========== 기본 설정 ==========
+  const DEFAULT_CONFIG = {
+    customer: { name: '고객가치', desc: '조직의 활동이 고객이 정말 해결하고 싶어하는 진짜 문제로 연결되도록 문제를 정의하는 영역' },
+    people:   { name: '사람',    desc: '목표·성장·관계 영역을 고려하여 구성원이 일하고 싶은 환경과 관계·가치 체계를 설계하고 유지하는 영역' },
+    process:  { name: '프로세스', desc: '혁신을 위해 버리고, 본질에 집중하고, 연결하는 등 조직의 일하는 방식을 점검하고 개선하는 영역' }
   };
-}
+  const DIM_KEYS = ['customer', 'people', 'process'];
+  const DEFAULT_ADMIN_PW = 'admin1234';
+  const DEFAULT_PARTICIPANT_PW = 'spider';
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbx6lLISRhlacHFMWWU_qwb-PReIEDYGCsg0TZYU8Zjd2yiWtrGG5GWLpGdVwYiEr6hwLQ/exec';
 
-async function submitAll() {
-  if (!state.userName) { showToast('이름을 먼저 입력해주세요.'); return; }
-  const data = gatherData();
-  try {
-    await insertSubmission({ name: data.name, scores: data.scores, reason: data.reason, action1: data.action1, action2: data.action2, action3: data.action3, letter: data.letter, email: data.email });
-    showToast('✅ 제출 완료! 감사합니다.');
-    localStorage.removeItem('bm_draft_' + state.userName);
-    document.getElementById('saveStatus').textContent = '제출 완료';
-  } catch(e) { showToast('❌ 제출 오류: ' + e.message); }
-}
+  // ========== 상태 ==========
+  let userName = '';
+  let isAdmin = false;
+  let config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  let state = {
+    customer: { current: 0, target: 0 },
+    people:   { current: 0, target: 0 },
+    process:  { current: 0, target: 0 }
+  };
+  let extras = { reason: '', actionWhat: '', actionWhen: '', actionWho: '', letter: '', userEmail: '', submission: null };
+  let currentFocusKey = null;
 
-function handleEntry() {
-  const name = document.getElementById('entryName').value.trim();
-  const pw = document.getElementById('entryPw').value.trim();
-  const errEl = document.getElementById('entryError');
-  if (!name) { errEl.textContent = '이름을 입력해주세요.'; errEl.style.display='block'; return; }
-  if (pw !== ATTENDEE_PW) { errEl.textContent = '입장 암호가 올바르지 않습니다.'; errEl.style.display='block'; return; }
-  errEl.style.display = 'none';
-  state.userName = name;
-  state.isAdmin = false;
-  document.getElementById('headerUserName').textContent = name;
-  document.getElementById('entryModal').classList.add('hidden');
-  document.getElementById('adminBar').classList.add('hidden');
-  document.getElementById('mainContent').style.display = 'block';
-  loadLocal(); updateChart();
-}
+  // ========== 초기화 ==========
+  function loadAll() {
+    localStorage.setItem('orgAdminPw', DEFAULT_ADMIN_PW);
+    localStorage.setItem('orgParticipantPw', DEFAULT_PARTICIPANT_PW);
+    const cfg = localStorage.getItem('orgConfig');
+    if (cfg) { try { config = { ...config, ...JSON.parse(cfg) }; } catch (e) {} }
+    userName = localStorage.getItem('orgUserName') || '';
 
-function changeName() {
-  const newName = prompt('새 이름을 입력하세요:');
-  if (newName && newName.trim()) { state.userName = newName.trim(); document.getElementById('headerUserName').textContent = state.userName; showToast('이름이 변경되었습니다.'); }
-}
+    const params = new URLSearchParams(location.search);
+    const data = params.get('d');
+    if (data) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(atob(data)));
+        if (parsed.state) state = { ...state, ...parsed.state };
+        if (parsed.userName) userName = parsed.userName;
+      } catch (e) {}
+    } else {
+      const saved = localStorage.getItem('orgBalanceMap');
+      if (saved) { try { state = JSON.parse(saved); } catch (e) {} }
+    }
 
-function showAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); document.getElementById('adminEmail').focus(); }
-function hideAdminModal() {
-  document.getElementById('adminModal').classList.add('hidden');
-  document.getElementById('adminEmail').value = '';
-  document.getElementById('adminPw').value = '';
-  document.getElementById('adminError').style.display = 'none';
-}
+    const savedExtras = localStorage.getItem('orgBalanceExtras');
+    if (savedExtras) { try { extras = { ...extras, ...JSON.parse(savedExtras) }; } catch (e) {} }
 
-async function handleAdminLogin() {
-  const email = document.getElementById('adminEmail').value.trim();
-  const pw = document.getElementById('adminPw').value;
-  const errEl = document.getElementById('adminError');
-  const btn = document.getElementById('adminLoginBtn');
-  if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 모두 입력하세요.'; errEl.style.display='block'; return; }
-  btn.textContent = '로그인 중...'; btn.classList.add('btn-loading'); btn.disabled = true; errEl.style.display = 'none';
-  try {
-    const result = await supabaseAuthSignIn(email, pw);
-    state.adminToken = result.access_token; state.isAdmin = true; state.userName = '관리자';
-    document.getElementById('headerUserName').textContent = '관리자';
-    document.getElementById('adminModal').classList.add('hidden');
-    document.getElementById('entryModal').classList.add('hidden');
-    document.getElementById('mainContent').style.display = 'block';
-    document.getElementById('adminBar').classList.remove('hidden');
-    updateChart(); showToast('관리자 모드로 로그인했습니다.');
-  } catch(e) { errEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.'; errEl.style.display = 'block'; }
-  finally { btn.textContent = '로그인'; btn.classList.remove('btn-loading'); btn.disabled = false; }
-}
+    const ts = localStorage.getItem('orgBalanceMap_ts');
+    if (ts) document.getElementById('last-saved').textContent = new Date(parseInt(ts)).toLocaleString('ko-KR');
+  }
 
-async function adminLogout() {
-  if (state.adminToken) await supabaseAuthSignOut(state.adminToken).catch(() => {});
-  state.isAdmin = false; state.adminToken = null; state.userName = '';
-  document.getElementById('adminBar').classList.add('hidden');
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('entryModal').classList.remove('hidden');
-  document.getElementById('entryName').value = '';
-  document.getElementById('entryPw').value = '';
-  showToast('로그아웃 되었습니다.');
-}
+  function saveExtras() { localStorage.setItem('orgBalanceExtras', JSON.stringify(extras)); }
 
-async function openDashboard() { document.getElementById('dashboardOverlay').classList.remove('hidden'); await loadDashboard(); }
-function closeDashboard() { document.getElementById('dashboardOverlay').classList.add('hidden'); }
+  // ========== 이름 변경 ==========
+  const nameModal = document.getElementById('name-modal');
+  const nameInput = document.getElementById('name-input');
+  const nameError = document.getElementById('name-error');
 
-async function loadDashboard() {
-  const list = document.getElementById('submissionList');
-  list.innerHTML = '<div class="empty-state">불러오는 중...</div>';
-  try {
-    const submissions = await fetchSubmissions();
-    document.getElementById('statTotal').textContent = submissions.length;
-    if (submissions.length === 0) {
-      list.innerHTML = '<div class="empty-state">아직 제출된 데이터가 없습니다.</div>';
-      document.getElementById('statAvgCurrent').textContent = '-';
-      document.getElementById('statAvgFuture').textContent = '-';
+  function resetUserData() {
+    state = { customer: { current: 0, target: 0 }, people: { current: 0, target: 0 }, process: { current: 0, target: 0 } };
+    extras = { reason: '', actionWhat: '', actionWhen: '', actionWho: '', letter: '', userEmail: '', submission: null };
+    localStorage.removeItem('orgBalanceMap');
+    localStorage.removeItem('orgBalanceMap_ts');
+    localStorage.removeItem('orgBalanceExtras');
+    document.getElementById('last-saved').textContent = '없음';
+    document.getElementById('reason-input').value = '';
+    document.getElementById('action-what').value = '';
+    document.getElementById('action-when').value = '';
+    document.getElementById('action-who').value = '';
+    document.getElementById('letter').value = '';
+    document.getElementById('user-email').value = '';
+    updateReasonCounter(); updateLetterCounter(); showSubmissionInfo(); renderAll();
+  }
+
+  function openNameModal() {
+    nameModal.classList.remove('hidden');
+    nameInput.value = ''; nameError.textContent = '';
+    setTimeout(() => nameInput.focus(), 50);
+  }
+
+  function submitName() {
+    const v = nameInput.value.trim();
+    if (!v) { nameError.textContent = '이름을 입력해야 합니다.'; return; }
+    if (v.length > 30) { nameError.textContent = '이름은 30자 이내로 입력해주세요.'; return; }
+    const prevName = localStorage.getItem('orgUserName') || '';
+    if (prevName && prevName !== v) resetUserData();
+    userName = v;
+    localStorage.setItem('orgUserName', userName);
+    document.getElementById('user-name').textContent = userName;
+    nameModal.classList.add('hidden');
+  }
+
+  document.getElementById('name-submit').addEventListener('click', submitName);
+  document.getElementById('name-cancel').addEventListener('click', () => nameModal.classList.add('hidden'));
+  nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitName(); });
+  document.getElementById('change-name').addEventListener('click', openNameModal);
+
+  // ========== 관리자 로그인 ==========
+  const adminModal = document.getElementById('admin-modal');
+  const adminPwInput = document.getElementById('admin-pw');
+  const adminError = document.getElementById('admin-error');
+
+  function openAdminModal() {
+    adminModal.classList.remove('hidden');
+    adminPwInput.value = ''; adminError.textContent = '';
+    setTimeout(() => adminPwInput.focus(), 50);
+  }
+
+  function submitAdmin() {
+    const pw = adminPwInput.value;
+    const correct = localStorage.getItem('orgAdminPw') || DEFAULT_ADMIN_PW;
+    if (pw === correct) {
+      isAdmin = true;
+      adminModal.classList.add('hidden');
+      document.getElementById('admin-banner').classList.remove('hidden');
+      renderDimensions();
+      toast('관리자 모드로 전환되었습니다');
+    } else {
+      adminError.textContent = '비밀번호가 일치하지 않습니다.';
+    }
+  }
+
+  document.getElementById('open-admin').addEventListener('click', openAdminModal);
+  document.getElementById('admin-submit').addEventListener('click', submitAdmin);
+  document.getElementById('admin-cancel').addEventListener('click', () => adminModal.classList.add('hidden'));
+  adminPwInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitAdmin(); });
+  document.getElementById('admin-logout').addEventListener('click', () => {
+    isAdmin = false;
+    document.getElementById('admin-banner').classList.add('hidden');
+    renderDimensions();
+    toast('관리자 모드를 종료했습니다');
+  });
+
+  document.getElementById('save-admin-edits').addEventListener('click', () => {
+    DIM_KEYS.forEach(key => {
+      const nameEl = document.querySelector(`.admin-input[data-dim="${key}"]`);
+      const descEl = document.querySelector(`.admin-textarea[data-dim="${key}"]`);
+      if (nameEl) config[key].name = nameEl.value.trim() || DEFAULT_CONFIG[key].name;
+      if (descEl) config[key].desc = descEl.value.trim() || DEFAULT_CONFIG[key].desc;
+    });
+    localStorage.setItem('orgConfig', JSON.stringify(config));
+    renderAll();
+    toast('영역 정보가 저장되었습니다');
+  });
+
+  // ========== 비밀번호 변경 ==========
+  const pwChangeModal = document.getElementById('pw-change-modal');
+  const newPw = document.getElementById('new-pw');
+  const newPw2 = document.getElementById('new-pw2');
+  const pwChangeError = document.getElementById('pw-change-error');
+  let pwChangeMode = 'admin';
+
+  function openPwChange(mode) {
+    pwChangeMode = mode;
+    document.getElementById('pw-change-title').textContent = mode === 'participant' ? '참석자 입장 암호 변경' : '관리자 비밀번호 변경';
+    document.getElementById('pw-change-desc').textContent = mode === 'participant' ? '새 입장 암호를 입력하세요. (4자 이상)' : '새 관리자 비밀번호를 입력하세요. (4자 이상)';
+    pwChangeModal.classList.remove('hidden');
+    newPw.value = ''; newPw2.value = ''; pwChangeError.textContent = '';
+    setTimeout(() => newPw.focus(), 50);
+  }
+
+  document.getElementById('change-pw-btn').addEventListener('click', () => openPwChange('admin'));
+  document.getElementById('change-participant-pw-btn').addEventListener('click', () => openPwChange('participant'));
+  document.getElementById('pw-change-cancel').addEventListener('click', () => pwChangeModal.classList.add('hidden'));
+  document.getElementById('pw-change-submit').addEventListener('click', () => {
+    const a = newPw.value, b = newPw2.value;
+    if (a.length < 4) { pwChangeError.textContent = '비밀번호는 4자 이상이어야 합니다.'; return; }
+    if (a !== b) { pwChangeError.textContent = '두 비밀번호가 일치하지 않습니다.'; return; }
+    localStorage.setItem(pwChangeMode === 'participant' ? 'orgParticipantPw' : 'orgAdminPw', a);
+    pwChangeModal.classList.add('hidden');
+    toast(pwChangeMode === 'participant' ? '참석자 입장 암호가 변경되었습니다' : '관리자 비밀번호가 변경되었습니다');
+  });
+
+  // ========== 참석자 입장 ==========
+  const participantModal = document.getElementById('participant-modal');
+  const participantPwInput = document.getElementById('participant-pw');
+  const participantNameInput = document.getElementById('participant-name');
+  const participantError = document.getElementById('participant-error');
+
+  function showParticipantGate() {
+    participantModal.classList.remove('hidden');
+    participantNameInput.value = ''; participantPwInput.value = ''; participantError.textContent = '';
+    setTimeout(() => participantNameInput.focus(), 50);
+  }
+
+  async function submitParticipantPw() {
+    const name = participantNameInput.value.trim();
+    const pw = participantPwInput.value;
+    const correctParticipant = localStorage.getItem('orgParticipantPw') || DEFAULT_PARTICIPANT_PW;
+    const correctAdmin = localStorage.getItem('orgAdminPw') || DEFAULT_ADMIN_PW;
+
+    if (!name) { participantError.textContent = '이름을 입력해주세요.'; participantNameInput.focus(); return; }
+
+    // 관리자 진입
+    if (name === '관리자') {
+      if (pw !== correctAdmin) { participantError.textContent = '관리자 암호가 올바르지 않습니다.'; participantPwInput.focus(); return; }
+      sessionStorage.setItem('orgParticipantAuthed', '1');
+      participantModal.classList.add('hidden');
+      isAdmin = true;
+      userName = '관리자';
+      document.getElementById('user-name').textContent = '관리자';
+      document.getElementById('admin-banner').classList.remove('hidden');
+      renderDimensions();
+      openDashboard();
+      toast('관리자 모드로 입장했습니다');
       return;
     }
-    let totalCurrent = 0, totalFuture = 0, count = 0;
-    submissions.forEach(s => { if (s.scores) { Object.values(s.scores).forEach(sc => { totalCurrent += sc.current || 0; totalFuture += sc.future || 0; count++; }); } });
-    document.getElementById('statAvgCurrent').textContent = count ? (totalCurrent/count).toFixed(1) : '-';
-    document.getElementById('statAvgFuture').textContent = count ? (totalFuture/count).toFixed(1) : '-';
-    list.innerHTML = submissions.map(s => {
-      const scores = s.scores || {};
-      const scoreBadges = Object.entries(scores).map(([key, val]) => { const area = AREAS.find(a => a.key === key); return `<div class="score-badge">${area?.label || key}: 현재 <strong>${val.current}</strong> → 목표 <strong>${val.future}</strong></div>`; }).join('');
-      const date = s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : '';
-      return `<div class="submission-item"><div class="submission-name">${s.name || '이름없음'} <span>${date}</span></div><div class="submission-scores">${scoreBadges}</div>${s.reason ? `<div class="submission-reason">💬 ${s.reason}</div>` : ''}${s.action1 ? `<div class="submission-actions-text">✅ 실천: ${s.action1} / 기한: ${s.action2 || '-'} / 도움: ${s.action3 || '-'}</div>` : ''}</div>`;
-    }).join('');
-  } catch(e) { list.innerHTML = `<div class="empty-state">오류: ${e.message}</div>`; }
-}
 
-async function deleteAll() {
-  if (!confirm('전체 제출 데이터를 삭제하시겠습니까?')) return;
-  try { await deleteAllSubmissions(); showToast('전체 삭제 완료'); await loadDashboard(); }
-  catch(e) { showToast('삭제 오류: ' + e.message); }
-}
+    // 참가자 진입
+    if (name.length > 30) { participantError.textContent = '이름은 30자 이내로 입력해주세요.'; return; }
+    if (pw !== correctParticipant) { participantError.textContent = '입장 암호가 올바르지 않습니다.'; participantPwInput.focus(); return; }
 
-async function exportCSV() {
-  try {
-    const submissions = await fetchSubmissions();
-    if (!submissions.length) { showToast('데이터가 없습니다.'); return; }
-    const headers = ['이름', '제출일시', ...AREAS.map(a => a.label+'_현재'), ...AREAS.map(a => a.label+'_목표'), '이유', '실천사항', '기한', '도움요청', '편지', '이메일'];
-    const rows = submissions.map(s => [s.name, s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : '', ...AREAS.map(a => s.scores?.[a.key]?.current ?? ''), ...AREAS.map(a => s.scores?.[a.key]?.future ?? ''), s.reason || '', s.action1 || '', s.action2 || '', s.action3 || '', s.letter || '', s.email || '']);
-    const csv = '\uFEFF' + [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `제출현황_${new Date().toLocaleDateString('ko-KR')}.csv`; a.click();
-    showToast('CSV 다운로드 완료');
-  } catch(e) { showToast('오류: ' + e.message); }
-}
+    sessionStorage.setItem('orgParticipantAuthed', '1');
+    participantModal.classList.add('hidden');
 
-function showToast(msg) {
-  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
+    const prevName = localStorage.getItem('orgUserName') || '';
+    if (prevName && prevName !== name) {
+      resetUserData();
+    }
 
-init();
+    userName = name;
+    localStorage.setItem('orgUserName', userName);
+    document.getElementById('user-name').textContent = userName;
+
+    // ── Supabase에서 이전 제출 데이터 불러오기 ──
+    const prevData = await loadUserData(name);
+    if (prevData) {
+      const doLoad = confirm(`${name}님의 이전 제출 데이터가 있습니다.\n불러올까요?`);
+      if (doLoad) {
+        if (prevData.state) state = { ...state, ...prevData.state };
+        if (prevData.extras) {
+          extras = { ...extras, ...prevData.extras };
+          document.getElementById('reason-input').value = extras.reason || '';
+          document.getElementById('action-what').value = extras.actionWhat || '';
+          document.getElementById('action-when').value = extras.actionWhen || '';
+          document.getElementById('action-who').value = extras.actionWho || '';
+          document.getElementById('letter').value = extras.letter || '';
+          document.getElementById('user-email').value = extras.userEmail || '';
+          updateReasonCounter(); updateLetterCounter(); showSubmissionInfo();
+        }
+        renderAll();
+        toast('이전 데이터를 불러왔습니다');
+      }
+    }
+  }
+
+  document.getElementById('participant-submit').addEventListener('click', submitParticipantPw);
+  participantNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') participantPwInput.focus(); });
+  participantPwInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitParticipantPw(); });
+
+  // ========== 영역 렌더 ==========
+  function renderDimensions() {
+    const container = document.getElementById('dimensions-container');
+    container.innerHTML = '';
+    DIM_KEYS.forEach(key => {
+      const dim = config[key];
+      const dimEl = document.createElement('div');
+      dimEl.className = 'dimension';
+      dimEl.dataset.dim = key;
+      let header = isAdmin
+        ? `<input class="admin-input" data-dim="${key}" value="${escapeHtml(dim.name)}" placeholder="영역 이름"><textarea class="admin-textarea" data-dim="${key}" placeholder="영역 설명">${escapeHtml(dim.desc)}</textarea>`
+        : `<div class="dim-header"><span class="dim-name">${escapeHtml(dim.name)}</span></div><div class="dim-desc">${escapeHtml(dim.desc)}</div>`;
+      dimEl.innerHTML = `${header}
+        <div class="score-row"><div class="score-label current"><span class="dot"></span>현재 수준</div><div class="score-buttons" data-type="current"></div></div>
+        <div class="score-row"><div class="score-label target"><span class="dot"></span>미래 목표</div><div class="score-buttons" data-type="target"></div></div>`;
+      container.appendChild(dimEl);
+    });
+    renderButtons();
+  }
+
+  function renderButtons() {
+    document.querySelectorAll('.dimension').forEach(dimEl => {
+      const dim = dimEl.dataset.dim;
+      dimEl.querySelectorAll('.score-buttons').forEach(c => {
+        const type = c.dataset.type;
+        c.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'score-btn ' + type;
+          btn.textContent = i + '점';
+          if (state[dim][type] === i) btn.classList.add('active');
+          btn.addEventListener('click', () => {
+            state[dim][type] = state[dim][type] === i ? 0 : i;
+            renderButtons(); renderChart(); renderSummary();
+          });
+          c.appendChild(btn);
+        }
+      });
+    });
+  }
+
+  // ========== 차트 ==========
+  function renderChart() {
+    const svg = document.getElementById('chart');
+    const cx = 250, cy = 270, R = 200;
+    function vertex(angleDeg, r) {
+      const rad = (angleDeg - 90) * Math.PI / 180;
+      return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+    }
+    const angles = { customer: 0, process: 120, people: 240 };
+    let svgContent = '';
+    for (let i = 1; i <= 5; i++) {
+      const r = (i/5)*R;
+      const p1 = vertex(angles.customer,r), p2 = vertex(angles.process,r), p3 = vertex(angles.people,r);
+      svgContent += `<polygon points="${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}" fill="none" stroke="#d6d3c8" stroke-width="1"/>`;
+    }
+    for (let i = 1; i <= 5; i++) {
+      const r = (i/5)*R, top = vertex(angles.customer, r);
+      svgContent += `<text x="${top[0]-18}" y="${top[1]+5}" font-size="11" fill="#8a8a8a" font-family="inherit">${i}점</text>`;
+    }
+    Object.values(angles).forEach(a => {
+      const v = vertex(a, R);
+      svgContent += `<line x1="${cx}" y1="${cy}" x2="${v[0]}" y2="${v[1]}" stroke="#d6d3c8" stroke-width="1"/>`;
+    });
+    function dataTriangle(type, color, dashed) {
+      const c = state.customer[type], pe = state.people[type], pr = state.process[type];
+      if (!c && !pe && !pr) return '';
+      const p1 = vertex(angles.customer,(c/5)*R), p2 = vertex(angles.process,(pr/5)*R), p3 = vertex(angles.people,(pe/5)*R);
+      const points = `${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`;
+      const dash = dashed ? 'stroke-dasharray="6 4"' : '';
+      let out = `<polygon points="${points}" fill="${dashed?'none':color}" fill-opacity="${dashed?0:0.1}" stroke="${color}" stroke-width="2.5" ${dash}/>`;
+      [[p1,c],[p2,pr],[p3,pe]].forEach(([p,val]) => { if(val>0) out+=`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${color}" stroke="white" stroke-width="1.5"/>`; });
+      return out;
+    }
+    svgContent += dataTriangle('current','#4a6a92',true);
+    svgContent += dataTriangle('target','#1e3a5f',false);
+    const labelOffsets = { customer:{dx:0,dy:-22,anchor:'middle'}, process:{dx:22,dy:8,anchor:'start'}, people:{dx:-22,dy:8,anchor:'end'} };
+    DIM_KEYS.forEach(k => {
+      const v = vertex(angles[k],R), o = labelOffsets[k];
+      svgContent += `<text x="${v[0]+o.dx}" y="${v[1]+o.dy}" font-size="16" font-weight="700" fill="#1e3a5f" text-anchor="${o.anchor}" font-family="inherit">${escapeXml(config[k].name)}</text>`;
+    });
+    svg.innerHTML = svgContent;
+  }
+
+  function renderSummary() {
+    const wrap = document.getElementById('summary');
+    wrap.innerHTML = '';
+    const gaps = DIM_KEYS.map(k => {
+      const cur = state[k].current, tgt = state[k].target;
+      const gap = (cur && tgt) ? tgt - cur : null;
+      return { key: k, cur, tgt, gap };
+    });
+    const valid = gaps.filter(g => g.gap !== null);
+    let maxKey = null;
+    if (valid.length > 0) {
+      const maxAbs = Math.max(...valid.map(g => Math.abs(g.gap)));
+      const candidates = valid.filter(g => Math.abs(g.gap) === maxAbs && Math.abs(g.gap) > 0);
+      if (candidates.length > 0) maxKey = candidates[0].key;
+    }
+    currentFocusKey = maxKey;
+    updateReasonSection(maxKey);
+    gaps.forEach(g => {
+      const k = g.key;
+      const gapText = g.gap === null ? '–' : (g.gap > 0 ? '+'+g.gap : ''+g.gap);
+      const detail = (g.cur && g.tgt) ? `현재 ${g.cur}점 → 미래 ${g.tgt}점` : (g.cur ? `현재 ${g.cur}점 (미래 미입력)` : (g.tgt ? `미래 ${g.tgt}점 (현재 미입력)` : '입력 필요'));
+      wrap.innerHTML += `<div class="summary-item${k===maxKey?' focus':''}"><div class="name">${escapeHtml(config[k].name)}</div><div class="gap">${gapText}</div><div class="detail">${escapeHtml(detail)}</div></div>`;
+    });
+    const callout = document.getElementById('focus-callout');
+    if (maxKey) {
+      const g = gaps.find(x => x.key === maxKey);
+      callout.classList.remove('empty');
+      callout.innerHTML = `<div class="callout-title">개선 우선순위</div><div class="callout-msg">현재 수준과 미래 모습 사이의 ${g.gap>0?'성장 폭':'하락 폭'}이 가장 큰 영역은 <strong>${escapeHtml(config[maxKey].name)}</strong>입니다 (현재 ${g.cur}점 → 미래 ${g.tgt}점, 갭 ${g.gap>0?'+':''}${g.gap}). ${escapeHtml(userName||'응답자')}님, 앞으로 <strong>${escapeHtml(config[maxKey].name)}</strong> 영역을 자신의 개선 영역 우선순위 1순위로 두고 집중해 나가시기 바랍니다.</div>`;
+    } else if (valid.length > 0) {
+      callout.classList.remove('empty');
+      callout.innerHTML = `<div class="callout-title">개선 우선순위</div><div class="callout-msg">세 영역 모두 현재와 미래의 차이가 동일합니다. 균형 자체는 안정적이니, 앞으로 어떤 영역을 가장 먼저 끌어올릴지 자신의 개선 우선순위를 정해보시기 바랍니다.</div>`;
+    } else {
+      callout.classList.add('empty');
+      callout.innerHTML = `<div class="callout-title">개선 우선순위</div><div class="callout-msg">현재 수준과 미래 목표를 모두 입력하면, 앞으로의 개선 우선순위를 안내해 드립니다.</div>`;
+    }
+  }
+
+  function renderTitle() {
+    const names = DIM_KEYS.map(k => (config[k].name||'').trim()).filter(Boolean);
+    const titleText = names.length === DIM_KEYS.length ? `${names.join(' · ')} 분석맵` : '분석맵';
+    document.getElementById('page-title').textContent = titleText;
+    document.title = titleText;
+  }
+
+  function renderAll() { renderTitle(); renderDimensions(); renderChart(); renderSummary(); }
+
+  // ========== 헬퍼 ==========
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function escapeXml(s) { return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c])); }
+  function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+  function formatDate(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  function pad(n) { return String(n).padStart(2,'0'); }
+
+  // ========== 액션 버튼 ==========
+  document.getElementById('btn-save').addEventListener('click', () => {
+    localStorage.setItem('orgBalanceMap', JSON.stringify(state));
+    saveExtras();
+    const ts = Date.now();
+    localStorage.setItem('orgBalanceMap_ts', ts.toString());
+    document.getElementById('last-saved').textContent = new Date(ts).toLocaleString('ko-KR');
+    toast(`${userName}님의 내용이 저장되었습니다`);
+  });
+
+  document.getElementById('btn-share').addEventListener('click', async () => {
+    const payload = { userName, state };
+    const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
+    const url = `${location.origin}${location.pathname}?d=${encoded}`;
+    try { await navigator.clipboard.writeText(url); toast('공유 링크가 복사되었습니다'); }
+    catch (e) { prompt('아래 링크를 복사하세요:', url); }
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (!confirm('입력한 점수, 이유, 활동 계획, 편지를 모두 초기화할까요?')) return;
+    resetUserData();
+    toast('초기화되었습니다');
+  });
+
+  // ========== Reason / Activity / Letter ==========
+  function updateReasonSection(maxKey) {
+    const ctx = document.getElementById('reason-context');
+    const input = document.getElementById('reason-input');
+    const submit = document.getElementById('reason-submit');
+    if (maxKey) {
+      const g = state[maxKey];
+      ctx.innerHTML = `<strong>${escapeHtml(config[maxKey].name)}</strong> 영역의 갭이 가장 큽니다 (현재 ${g.current}점 → 미래 ${g.target}점). 왜 그렇게 생각하시나요?`;
+      input.disabled = false; submit.disabled = false;
+      input.placeholder = '10자 이상 작성해주세요';
+    } else {
+      ctx.textContent = '세 영역의 점수를 모두 입력하면 가장 갭이 큰 영역이 표시됩니다.';
+      input.disabled = true; submit.disabled = true;
+      input.placeholder = '점수 입력 후 활성화됩니다';
+    }
+  }
+
+  function updateReasonCounter() {
+    const len = document.getElementById('reason-input').value.length;
+    const counter = document.getElementById('reason-counter');
+    counter.textContent = `${len}자 / 10자 이상 ${len>=10?'✓':'필요'}`;
+    counter.className = 'char-counter' + (len>=10?' ok':(len>0?' warn':''));
+  }
+
+  function updateLetterCounter() {
+    const len = document.getElementById('letter').value.length;
+    const counter = document.getElementById('letter-counter');
+    counter.textContent = `${len}자`;
+    counter.className = 'char-counter' + (len>0?' ok':'');
+  }
+
+  function updateTargetDateBanner() {
+    const target = new Date(Date.now() + 90*24*60*60*1000);
+    document.getElementById('target-date-text').textContent = formatDate(target) + ' (오늘로부터 90일 뒤)';
+    document.getElementById('target-date-banner').style.display = 'flex';
+  }
+
+  function showSubmissionInfo() {
+    const info = document.getElementById('submission-info');
+    if (extras.submission) {
+      const { submittedAt, targetDate } = extras.submission;
+      info.style.display = 'block';
+      info.innerHTML = `<strong>✓ 제출 완료</strong><br>제출일: ${new Date(submittedAt).toLocaleString('ko-KR')}<br>받기로 약속한 날: <strong>${targetDate}</strong>`;
+    } else {
+      info.style.display = 'none';
+    }
+  }
+
+  function toICSDate(d) { return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`; }
+
+  function buildEmailBody(targetDate) {
+    const lines = ['━━━━━━━━━━━━━━━━━━━━━━━━━━','  리박스컨설팅: 나에게 쓰는 편지','━━━━━━━━━━━━━━━━━━━━━━━━━━','',`작성자: ${userName}`,`작성일: ${formatDate(new Date())}`,`받기로 약속한 날: ${formatDate(targetDate)} (90일 뒤)`,'',`▣ 분석맵 결과`];
+    DIM_KEYS.forEach(k => { const s=state[k]; lines.push(`  • ${config[k].name} — 현재 ${s.current}점 / 미래 ${s.target}점 (갭 ${s.target-s.current>=0?'+':''}${s.target-s.current})`); });
+    const focusName = currentFocusKey ? config[currentFocusKey].name : '';
+    lines.push('', '▣ 개선 우선순위 1순위: ' + focusName, '  ↳ 이유: ' + extras.reason, '', '▣ 현장 적용 액션', '  1. 내일부터 실천: ' + extras.actionWhat, '  2. 완료 목표일: ' + extras.actionWhen, '  3. 도움 요청 대상: ' + extras.actionWho, '', '━━━━━━━━━━━━━━━━━━━━━━━━━━', '  ' + formatDate(targetDate) + '의 ' + userName + '님께', '━━━━━━━━━━━━━━━━━━━━━━━━━━', '', extras.letter, '', '━━━━━━━━━━━━━━━━━━━━━━━━━━', '© re:Box Consulting Proprietary  ·  무단배포금지');
+    return lines.join('\n');
+  }
+
+  function generateICS(targetDate, body) {
+    const localTarget = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 9, 0, 0);
+    return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//re:Box Consulting//Self Letter//KO','BEGIN:VEVENT',`UID:rebox-letter-${Date.now()}@rebox.asia`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(localTarget)}`,`DTEND:${toICSDate(new Date(localTarget.getTime()+30*60*1000))}`,`SUMMARY:리박스컨설팅: 나에게 쓰는 편지`,`DESCRIPTION:${body.replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;')}`, 'BEGIN:VALARM','TRIGGER:-PT0M','ACTION:DISPLAY','DESCRIPTION:리박스컨설팅: 나에게 쓰는 편지를 다시 읽어보세요','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  }
+
+  function downloadFile(content, filename, mime) {
+    const blob = new Blob([content], {type: mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // ========== 이벤트 바인딩 ==========
+  loadAll();
+
+  const reasonInput = document.getElementById('reason-input');
+  reasonInput.value = extras.reason || '';
+  updateReasonCounter();
+  reasonInput.addEventListener('input', updateReasonCounter);
+  document.getElementById('reason-submit').addEventListener('click', () => {
+    const v = reasonInput.value.trim();
+    if (!v) { toast('이유를 입력해주세요'); return; }
+    if (v.length < 10) { toast('10자 이상 작성해주세요'); return; }
+    extras.reason = v; saveExtras(); toast('이유가 저장되었습니다');
+  });
+
+  const actionWhat = document.getElementById('action-what');
+  const actionWhen = document.getElementById('action-when');
+  const actionWho = document.getElementById('action-who');
+  actionWhat.value = extras.actionWhat || '';
+  actionWhen.value = extras.actionWhen || '';
+  actionWho.value = extras.actionWho || '';
+  [actionWhat, actionWhen, actionWho].forEach(el => {
+    el.addEventListener('input', () => {
+      extras.actionWhat = actionWhat.value; extras.actionWhen = actionWhen.value; extras.actionWho = actionWho.value;
+      saveExtras();
+    });
+  });
+
+  const letterInput = document.getElementById('letter');
+  letterInput.value = extras.letter || '';
+  updateLetterCounter();
+  letterInput.addEventListener('input', () => { extras.letter = letterInput.value; saveExtras(); updateLetterCounter(); });
+
+  const userEmailInput = document.getElementById('user-email');
+  userEmailInput.value = extras.userEmail || '';
+  userEmailInput.addEventListener('input', () => { extras.userEmail = userEmailInput.value.trim(); saveExtras(); });
+
+  updateTargetDateBanner();
+  showSubmissionInfo();
+
+  // ========== 최종 제출 (Supabase 저장) ==========
+  document.getElementById('btn-final-submit').addEventListener('click', async () => {
+    const hasAnyScore = DIM_KEYS.some(k => state[k].current > 0 || state[k].target > 0);
+    if (!hasAnyScore) { alert('최소 한 영역의 현재 수준 또는 미래 목표 점수를 입력해주세요.'); return; }
+    if (!extras.reason || extras.reason.trim().length < 10) { alert('이유를 10자 이상 입력해주세요.'); document.getElementById('reason-input').focus(); return; }
+
+    const btn = document.getElementById('btn-final-submit');
+    btn.disabled = true; btn.textContent = '제출 중...';
+
+    const submittedAt = new Date();
+    const targetDate = new Date(submittedAt.getTime() + 90*24*60*60*1000);
+
+    const submission = {
+      submittedAt: submittedAt.toISOString(),
+      targetDate: formatDate(targetDate),
+      userName,
+      state: JSON.parse(JSON.stringify(state)),
+      extras: JSON.parse(JSON.stringify(extras)),
+      focusKey: currentFocusKey || '',
+      focusKeyName: currentFocusKey ? (config[currentFocusKey]?.name || '') : ''
+    };
+
+    // Supabase 저장
+    const saved = await saveSubmission(submission);
+    if (saved) {
+      toast('Supabase에 저장되었습니다');
+    } else {
+      toast('로컬에 임시 저장되었습니다 (네트워크 확인 필요)');
+    }
+
+    // Google Sheets 전송 (기존 유지)
+    const formData = new FormData();
+    Object.entries({ submittedAt: submission.submittedAt, targetDate: submission.targetDate, userName, state: JSON.stringify(state), extras: JSON.stringify(extras), focusKey: currentFocusKey||'', focusKeyName: currentFocusKey?(config[currentFocusKey]?.name||''):'' }).forEach(([k,v]) => formData.append(k,v));
+    fetch(SHEET_URL, { method:'POST', mode:'no-cors', body:formData }).catch(err=>console.warn('Sheets 전송 실패:',err));
+
+    // 개인 기록 저장
+    extras.submission = { submittedAt: submittedAt.toISOString(), targetDate: formatDate(targetDate) };
+    saveExtras(); showSubmissionInfo();
+
+    // 이메일 발송
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (extras.userEmail && emailRe.test(extras.userEmail)) {
+      const body = buildEmailBody(targetDate);
+      const ics = generateICS(targetDate, body);
+      downloadFile(ics, `리박스컨설팅_나에게_쓰는_편지_${formatDate(targetDate)}.ics`, 'text/calendar;charset=utf-8');
+      window.location.href = `mailto:${encodeURIComponent(extras.userEmail)}?bcc=${encodeURIComponent('rebox@rebox.asia')}&subject=${encodeURIComponent('리박스컨설팅: 나에게 쓰는 편지 [수신 약속일: '+formatDate(targetDate)+']')}&body=${encodeURIComponent(body)}`;
+    }
+
+    btn.disabled = false; btn.textContent = '제출하기';
+  });
+
+  // ========== 관리자 대시보드 (Supabase 연동) ==========
+  const dashBackdrop = document.getElementById('dash-backdrop');
+
+  async function openDashboard() {
+    dashBackdrop.classList.remove('hidden');
+    await renderDashboard();
+  }
+
+  function closeDashboard() { dashBackdrop.classList.add('hidden'); }
+
+  document.getElementById('open-dash-btn').addEventListener('click', openDashboard);
+  document.getElementById('dash-close').addEventListener('click', closeDashboard);
+  dashBackdrop.addEventListener('click', e => { if (e.target === dashBackdrop) closeDashboard(); });
+  document.getElementById('dash-search').addEventListener('input', () => renderDashboard());
+
+  document.getElementById('dash-clear').addEventListener('click', async () => {
+    if (!confirm('제출된 모든 참가자 데이터를 삭제할까요?\n이 작업은 되돌릴 수 없습니다.')) return;
+    const ok = await clearAllSubmissions();
+    localStorage.removeItem('orgAllSubmissions');
+    await renderDashboard();
+    toast(ok ? '전체 제출 데이터가 삭제되었습니다' : '삭제 중 오류가 발생했습니다');
+  });
+
+  document.getElementById('dash-export-csv').addEventListener('click', async () => {
+    const subs = await getAllSubmissions();
+    if (!subs.length) { toast('내보낼 데이터가 없습니다'); return; }
+    const header = ['이름','제출일시','목표일',...DIM_KEYS.flatMap(k=>[`${config[k].name}_현재`,`${config[k].name}_미래`,`${config[k].name}_갭`]),'우선순위영역','갭이유','실천할것','완료목표일','도움요청대상','편지','이메일'];
+    const rows = subs.map(s => {
+      // Supabase는 state/extras가 jsonb로 저장됨
+      const st = typeof s.state === 'string' ? JSON.parse(s.state) : s.state;
+      const ex = typeof s.extras === 'string' ? JSON.parse(s.extras) : s.extras;
+      const scores = DIM_KEYS.flatMap(k => { const c=st?.[k]?.current||0, t=st?.[k]?.target||0; return [c,t,t-c]; });
+      const focusName = s.focus_key || s.focusKey ? (config[s.focus_key||s.focusKey]?.name || s.focus_key || s.focusKey) : '';
+      const vals = [s.user_name||s.userName||'', new Date(s.submitted_at||s.submittedAt).toLocaleString('ko-KR'), s.target_date||s.targetDate||'', ...scores, focusName, ex?.reason||'', ex?.actionWhat||'', ex?.actionWhen||'', ex?.actionWho||'', (ex?.letter||'').replace(/\n/g,' '), ex?.userEmail||''];
+      return vals.map(function(v){ return '"' + String(v).replace(/"/g, '""') + '"'; });
+    });
+    const csv = '\uFEFF' + [header,...rows].map(r=>r.join(',')).join('\n');
+    downloadFile(csv, `제출현황_${formatDate(new Date())}.csv`, 'text/csv;charset=utf-8');
+    toast('CSV 파일이 다운로드되었습니다');
+  });
+
+  async function renderDashboard() {
+    const list = document.getElementById('dash-list');
+    list.innerHTML = '<div class="dash-empty">불러오는 중...</div>';
+    const subs = await getAllSubmissions();
+    const q = (document.getElementById('dash-search').value||'').trim().toLowerCase();
+    const filtered = q ? subs.filter(s => (s.user_name||s.userName||'').toLowerCase().includes(q)) : subs;
+
+    document.getElementById('dash-meta').textContent = `총 ${subs.length}명 제출`;
+    document.getElementById('dash-count').textContent = q ? `검색 결과: ${filtered.length}명` : '';
+
+    if (!filtered.length) {
+      list.innerHTML = `<div class="dash-empty">${subs.length===0?'아직 제출된 내용이 없습니다.':'검색 결과가 없습니다.'}</div>`;
+      return;
+    }
+    list.innerHTML = '';
+    filtered.forEach((s, idx) => {
+      const st = typeof s.state === 'string' ? JSON.parse(s.state) : s.state;
+      const ex = typeof s.extras === 'string' ? JSON.parse(s.extras) : s.extras;
+      const focusKey = s.focus_key || s.focusKey || '';
+      const displayName = s.user_name || s.userName || '(이름없음)';
+      const submittedAt = s.submitted_at || s.submittedAt;
+      const scores = DIM_KEYS.map(k => {
+        const c=st?.[k]?.current||0, t=st?.[k]?.target||0;
+        const gap=(c&&t)?(t-c):null;
+        const isFocus = focusKey === k;
+        return `<span class="sub-score-pill${isFocus?' focus':''}">${escapeHtml(config[k]?.name||k)} ${c}→${t} (${gap!==null?(gap>0?'+'+gap:''+gap):'–'})</span>`;
+      }).join('');
+
+      const card = document.createElement('div');
+      card.className = 'sub-card';
+      card.innerHTML = `
+        <div class="sub-card-header">
+          <div><div class="sub-name">${escapeHtml(displayName)}</div><div class="sub-date">${new Date(submittedAt).toLocaleString('ko-KR')} 제출</div></div>
+          <div class="sub-scores">${scores}</div>
+          <div class="sub-toggle">▾</div>
+        </div>
+        <div class="sub-card-body" id="dash-body-${idx}">
+          <div class="sub-detail-grid">
+            <div class="sub-detail-item"><div class="label">우선순위 영역</div><div class="value${!focusKey?' empty':''}">${focusKey?escapeHtml(config[focusKey]?.name||focusKey):'(미입력)'}</div></div>
+            <div class="sub-detail-item"><div class="label">갭 이유</div><div class="value${!ex?.reason?' empty':''}">${ex?.reason?escapeHtml(ex.reason):'(미작성)'}</div></div>
+            <div class="sub-detail-item"><div class="label">내일부터 실천할 것</div><div class="value${!ex?.actionWhat?' empty':''}">${ex?.actionWhat?escapeHtml(ex.actionWhat):'(미작성)'}</div></div>
+            <div class="sub-detail-item"><div class="label">완료 목표일</div><div class="value${!ex?.actionWhen?' empty':''}">${ex?.actionWhen?escapeHtml(ex.actionWhen):'(미선택)'}</div></div>
+            <div class="sub-detail-item"><div class="label">도움 요청 대상</div><div class="value${!ex?.actionWho?' empty':''}">${ex?.actionWho?escapeHtml(ex.actionWho):'(미작성)'}</div></div>
+            <div class="sub-detail-item"><div class="label">이메일</div><div class="value${!ex?.userEmail?' empty':''}">${ex?.userEmail?escapeHtml(ex.userEmail):'(미입력)'}</div></div>
+          </div>
+          ` + (ex?.letter ? '<div class="sub-detail-item"><div class="label">나에게 쓰는 편지</div><div class="sub-letter-box">' + escapeHtml(ex.letter) + '</div></div>' : '<div style="font-size:13px;color:#ccc;font-style:italic;">편지 미작성</div>') + `
+        </div>`;
+      card.querySelector('.sub-card-header').addEventListener('click', () => {
+        card.querySelector('.sub-card-body').classList.toggle('open');
+        card.querySelector('.sub-toggle').classList.toggle('open');
+      });
+      list.appendChild(card);
+    });
+  }
+
+  // ========== PNG 다운로드 ==========
+  document.getElementById('btn-png').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-png');
+    btn.disabled = true; btn.textContent = '이미지 생성 중...';
+    try {
+      const reportEl = document.getElementById('report-container');
+      const names = DIM_KEYS.map(k=>(config[k].name||'').trim()).filter(Boolean);
+      const titleText = names.length===DIM_KEYS.length?`${names.join(' · ')} 분석맵`:'분석맵';
+      reportEl.innerHTML = `<div style="font-size:22px;font-weight:700;color:#1e3a5f;margin-bottom:16px;">${escapeHtml(titleText)}</div><div style="font-size:13px;color:#6b6b6b;margin-bottom:24px;">응답자: ${escapeHtml(userName)} | 작성일: ${formatDate(new Date())}</div>${document.getElementById('chart').outerHTML}`;
+      await new Promise(r=>setTimeout(r,200));
+      const canvas = await html2canvas(reportEl, { backgroundColor:'#f6f5f0', scale:2, useCORS:true, logging:false });
+      const a = document.createElement('a');
+      a.download = `${titleText}_${userName}_${formatDate(new Date())}.png`;
+      a.href = canvas.toDataURL('image/png'); a.click();
+      toast('이미지를 다운로드했습니다');
+    } catch(e) { console.error(e); alert('이미지 생성 중 오류가 발생했습니다.'); }
+    finally { btn.disabled=false; btn.textContent='전체 리포트 이미지 다운로드'; document.getElementById('report-container').innerHTML=''; }
+  });
+
+  // ========== 시작 ==========
+  renderAll();
+  showParticipantGate();
 </script>
 </body>
 </html>
