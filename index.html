@@ -9,102 +9,99 @@
   :root { --primary:#2563eb; --primary-dark:#1d4ed8; --accent:#f59e0b; --bg:#f8fafc; --card:#fff; --text:#1e293b; --text-sub:#64748b; --border:#e2e8f0; --success:#10b981; --danger:#ef4444; --radius:12px; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; }
-  .modal-overlay.hidden { display:none !important; }
-  .modal { background:var(--card); border-radius:var(--radius); padding:32px; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
-  .modal h3 { font-size:1.2rem; font-weight:700; margin-bottom:8px; }
-  .modal p { color:var(--text-sub); font-size:0.9rem; margin-bottom:20px; }
-  .modal input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:8px; font-size:1rem; margin-bottom:12px; outline:none; }
-  .modal input:focus { border-color:var(--primary); }
-  .modal-btns { display:flex; gap:8px; }
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px; }
+  .card { background:var(--card); border-radius:var(--radius); padding:32px; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+  .card h3 { font-size:1.2rem; font-weight:700; margin-bottom:8px; }
+  .card p { color:var(--text-sub); font-size:0.9rem; margin-bottom:20px; }
+  .card input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:8px; font-size:1rem; margin-bottom:12px; outline:none; }
+  .card input:focus { border-color:var(--primary); }
+  .btn-row { display:flex; gap:8px; }
   .btn { padding:12px 20px; border-radius:8px; border:none; font-size:0.95rem; font-weight:600; cursor:pointer; flex:1; }
-  .btn-primary { background:var(--primary); color:white; }
-  .btn-secondary { background:var(--border); color:var(--text); }
-  .error-msg { color:var(--danger); font-size:0.85rem; margin-bottom:10px; display:none; }
+  .btn-blue { background:var(--primary); color:white; }
+  .btn-gray { background:var(--border); color:var(--text); }
+  .errmsg { color:var(--danger); font-size:0.85rem; margin-bottom:10px; }
   header { background:var(--card); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
-  .header-title { font-size:1.1rem; font-weight:800; color:var(--primary); }
-  .header-user { font-size:0.85rem; color:var(--text-sub); display:flex; align-items:center; gap:8px; }
-  .header-user button { background:none; border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:0.8rem; cursor:pointer; color:var(--text-sub); }
+  .htitle { font-size:1.1rem; font-weight:800; color:var(--primary); }
+  .huser { font-size:0.85rem; color:var(--text-sub); display:flex; align-items:center; gap:8px; }
+  .huser button { background:none; border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:0.8rem; cursor:pointer; color:var(--text-sub); }
   main { max-width:720px; margin:0 auto; padding:24px 16px 60px; }
-  .section-card { background:var(--card); border-radius:var(--radius); padding:24px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid var(--border); }
-  .section-num { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:white; border-radius:50%; font-size:0.85rem; font-weight:700; margin-right:10px; }
-  .section-title { font-size:1.05rem; font-weight:700; display:flex; align-items:center; margin-bottom:16px; }
-  .area-block { margin-bottom:20px; }
-  .area-label { font-size:0.9rem; font-weight:700; margin-bottom:4px; }
-  .area-desc { font-size:0.82rem; color:var(--text-sub); margin-bottom:10px; }
-  .score-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .score-input-wrap label { font-size:0.8rem; color:var(--text-sub); display:block; margin-bottom:4px; }
-  .score-input-wrap input[type=range] { width:100%; accent-color:var(--primary); }
-  .score-display { display:flex; justify-content:space-between; font-size:0.82rem; color:var(--text-sub); }
-  .score-val { font-size:1.2rem; font-weight:800; color:var(--primary); text-align:center; }
-  .chart-wrap { position:relative; width:100%; max-width:340px; margin:0 auto; }
-  .chart-legend { display:flex; gap:16px; justify-content:center; margin-top:12px; font-size:0.82rem; }
-  .legend-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:4px; }
-  .gap-list { display:flex; flex-direction:column; gap:10px; }
-  .gap-item { display:flex; align-items:center; gap:12px; }
-  .gap-label { font-size:0.85rem; font-weight:600; width:120px; flex-shrink:0; }
-  .gap-bar-wrap { flex:1; background:#f1f5f9; border-radius:99px; height:12px; overflow:hidden; }
-  .gap-bar { height:100%; border-radius:99px; background:var(--accent); transition:width 0.4s; }
-  .gap-val { font-size:0.85rem; font-weight:700; width:36px; text-align:right; color:var(--text-sub); }
-  .reason-area { width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; font-size:0.95rem; resize:vertical; min-height:90px; font-family:inherit; outline:none; }
-  .reason-area:focus { border-color:var(--primary); }
-  .char-count { text-align:right; font-size:0.8rem; color:var(--text-sub); margin-top:4px; }
-  .action-item { margin-bottom:16px; }
-  .action-item label { font-size:0.88rem; font-weight:600; display:block; margin-bottom:6px; }
-  .action-item input, .action-item textarea { width:100%; padding:10px 14px; border:2px solid var(--border); border-radius:8px; font-size:0.95rem; font-family:inherit; outline:none; resize:vertical; }
-  .action-item input:focus, .action-item textarea:focus { border-color:var(--primary); }
-  .action-divider { border:none; border-top:1px dashed var(--border); margin:20px 0; }
-  .submit-area { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
-  .btn-submit { background:var(--primary); color:white; padding:14px 28px; border-radius:10px; border:none; font-size:1rem; font-weight:700; cursor:pointer; }
-  .btn-save { background:var(--bg); color:var(--text); padding:14px 20px; border-radius:10px; border:2px solid var(--border); font-size:0.95rem; font-weight:600; cursor:pointer; }
-  .save-status { font-size:0.82rem; color:var(--text-sub); margin-top:10px; }
-  .admin-bar { background:#fef3c7; border:1px solid #fcd34d; border-radius:10px; padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
-  .admin-bar-left { font-size:0.88rem; font-weight:600; color:#92400e; }
-  .admin-bar-right { display:flex; gap:8px; }
-  .btn-admin-sm { padding:7px 14px; border-radius:7px; border:none; font-size:0.82rem; font-weight:600; cursor:pointer; }
-  .btn-view { background:var(--primary); color:white; }
-  .btn-logout { background:#e5e7eb; color:#374151; }
-  .dashboard-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:500; display:flex; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; }
-  .dashboard-overlay.hidden { display:none !important; }
-  .dashboard { background:var(--card); border-radius:var(--radius); width:100%; max-width:800px; padding:28px; }
-  .dashboard-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:8px; }
-  .dashboard-header h2 { font-size:1.2rem; font-weight:800; }
-  .dashboard-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
-  .stat-box { background:var(--bg); border-radius:10px; padding:16px; text-align:center; }
-  .stat-num { font-size:2rem; font-weight:800; color:var(--primary); }
-  .stat-label { font-size:0.8rem; color:var(--text-sub); margin-top:4px; }
-  .submission-list { display:flex; flex-direction:column; gap:12px; max-height:500px; overflow-y:auto; }
-  .submission-item { border:1px solid var(--border); border-radius:10px; padding:16px; }
-  .submission-name { font-weight:700; font-size:1rem; margin-bottom:8px; display:flex; justify-content:space-between; }
-  .submission-name span { font-size:0.8rem; color:var(--text-sub); font-weight:400; }
-  .submission-scores { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
-  .score-badge { background:var(--bg); border-radius:6px; padding:4px 10px; font-size:0.8rem; }
-  .score-badge strong { color:var(--primary); }
-  .submission-reason { font-size:0.85rem; color:var(--text-sub); background:var(--bg); border-radius:6px; padding:8px 12px; margin-bottom:8px; }
-  .submission-actions-text { font-size:0.83rem; }
-  .btn-csv { background:var(--success); color:white; padding:8px 16px; border-radius:7px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; }
-  .btn-del-all { background:var(--danger); color:white; padding:8px 16px; border-radius:7px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; }
-  .btn-close { background:none; border:1px solid var(--border); border-radius:7px; padding:8px 16px; font-size:0.85rem; cursor:pointer; }
-  .empty-state { text-align:center; padding:40px; color:var(--text-sub); }
+  .sc { background:var(--card); border-radius:var(--radius); padding:24px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid var(--border); }
+  .snum { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:white; border-radius:50%; font-size:0.85rem; font-weight:700; margin-right:10px; }
+  .stitle { font-size:1.05rem; font-weight:700; display:flex; align-items:center; margin-bottom:16px; }
+  .ablock { margin-bottom:20px; }
+  .alabel { font-size:0.9rem; font-weight:700; margin-bottom:4px; }
+  .adesc { font-size:0.82rem; color:var(--text-sub); margin-bottom:10px; }
+  .srow { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .siwrap label { font-size:0.8rem; color:var(--text-sub); display:block; margin-bottom:4px; }
+  .siwrap input[type=range] { width:100%; accent-color:var(--primary); }
+  .sdisplay { display:flex; justify-content:space-between; font-size:0.82rem; color:var(--text-sub); }
+  .sval { font-size:1.2rem; font-weight:800; color:var(--primary); text-align:center; }
+  .cwrap { position:relative; width:100%; max-width:340px; margin:0 auto; }
+  .clegend { display:flex; gap:16px; justify-content:center; margin-top:12px; font-size:0.82rem; }
+  .ldot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:4px; }
+  .glist { display:flex; flex-direction:column; gap:10px; }
+  .gitem { display:flex; align-items:center; gap:12px; }
+  .glabel { font-size:0.85rem; font-weight:600; width:120px; flex-shrink:0; }
+  .gbwrap { flex:1; background:#f1f5f9; border-radius:99px; height:12px; overflow:hidden; }
+  .gbar { height:100%; border-radius:99px; background:var(--accent); transition:width 0.4s; }
+  .gval { font-size:0.85rem; font-weight:700; width:36px; text-align:right; color:var(--text-sub); }
+  textarea.ra { width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; font-size:0.95rem; resize:vertical; min-height:90px; font-family:inherit; outline:none; }
+  textarea.ra:focus { border-color:var(--primary); }
+  .cc { text-align:right; font-size:0.8rem; color:var(--text-sub); margin-top:4px; }
+  .ai { margin-bottom:16px; }
+  .ai label { font-size:0.88rem; font-weight:600; display:block; margin-bottom:6px; }
+  .ai input,.ai textarea { width:100%; padding:10px 14px; border:2px solid var(--border); border-radius:8px; font-size:0.95rem; font-family:inherit; outline:none; resize:vertical; }
+  .ai input:focus,.ai textarea:focus { border-color:var(--primary); }
+  .adiv { border:none; border-top:1px dashed var(--border); margin:20px 0; }
+  .subarea { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+  .subbtn { background:var(--primary); color:white; padding:14px 28px; border-radius:10px; border:none; font-size:1rem; font-weight:700; cursor:pointer; }
+  .savebtn { background:var(--bg); color:var(--text); padding:14px 20px; border-radius:10px; border:2px solid var(--border); font-size:0.95rem; font-weight:600; cursor:pointer; }
+  .savestatus { font-size:0.82rem; color:var(--text-sub); margin-top:10px; }
+  .adminbar { background:#fef3c7; border:1px solid #fcd34d; border-radius:10px; padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .adminbar-l { font-size:0.88rem; font-weight:600; color:#92400e; }
+  .adminbar-r { display:flex; gap:8px; }
+  .abtn { padding:7px 14px; border-radius:7px; border:none; font-size:0.82rem; font-weight:600; cursor:pointer; }
+  .abtn-blue { background:var(--primary); color:white; }
+  .abtn-gray { background:#e5e7eb; color:#374151; }
+  .dboverlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:500; display:flex; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; }
+  .db { background:var(--card); border-radius:var(--radius); width:100%; max-width:800px; padding:28px; }
+  .dbhdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:8px; }
+  .dbhdr h2 { font-size:1.2rem; font-weight:800; }
+  .dbstats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+  .statbox { background:var(--bg); border-radius:10px; padding:16px; text-align:center; }
+  .statnum { font-size:2rem; font-weight:800; color:var(--primary); }
+  .statlabel { font-size:0.8rem; color:var(--text-sub); margin-top:4px; }
+  .sublist { display:flex; flex-direction:column; gap:12px; max-height:500px; overflow-y:auto; }
+  .subitem { border:1px solid var(--border); border-radius:10px; padding:16px; }
+  .subname { font-weight:700; font-size:1rem; margin-bottom:8px; display:flex; justify-content:space-between; }
+  .subname span { font-size:0.8rem; color:var(--text-sub); font-weight:400; }
+  .subscores { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .sbadge { background:var(--bg); border-radius:6px; padding:4px 10px; font-size:0.8rem; }
+  .sbadge strong { color:var(--primary); }
+  .subreason { font-size:0.85rem; color:var(--text-sub); background:var(--bg); border-radius:6px; padding:8px 12px; margin-bottom:8px; }
+  .subact { font-size:0.83rem; }
+  .csvbtn { background:var(--success); color:white; padding:8px 16px; border-radius:7px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; }
+  .delbtn { background:var(--danger); color:white; padding:8px 16px; border-radius:7px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; }
+  .closebtn { background:none; border:1px solid var(--border); border-radius:7px; padding:8px 16px; font-size:0.85rem; cursor:pointer; }
+  .empty { text-align:center; padding:40px; color:var(--text-sub); }
   .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1e293b; color:white; padding:12px 24px; border-radius:99px; font-size:0.9rem; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; }
   .toast.show { opacity:1; }
-  .gap-highlight { background:#fffbeb; border:1px solid #fcd34d; border-radius:8px; padding:12px 16px; font-size:0.9rem; font-weight:600; color:#92400e; margin-bottom:12px; }
-  .hidden { display:none !important; }
+  .ghigh { background:#fffbeb; border:1px solid #fcd34d; border-radius:8px; padding:12px 16px; font-size:0.9rem; font-weight:600; color:#92400e; margin-bottom:12px; }
   footer { text-align:center; font-size:0.78rem; color:var(--text-sub); padding:20px; }
-  @media(max-width:480px) { .score-row{grid-template-columns:1fr;} .dashboard-stats{grid-template-columns:1fr 1fr;} }
+  @media(max-width:480px){.srow{grid-template-columns:1fr;}.dbstats{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
-<div class="modal-overlay" id="entryModal">
-  <div class="modal">
+<div class="overlay" id="entryOverlay">
+  <div class="card">
     <h3>입장하기</h3>
     <p>이름과 입장 암호를 입력해주세요.</p>
     <input type="text" id="entryName" placeholder="이름" maxlength="20">
     <input type="password" id="entryPw" placeholder="입장 암호">
-    <div class="error-msg" id="entryError">이름 또는 암호가 올바르지 않습니다.</div>
-    <div class="modal-btns">
-      <button class="btn btn-primary" onclick="handleEntry()">입장하기</button>
+    <div class="errmsg" id="entryErr" style="display:none"></div>
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="doEntry()">입장하기</button>
     </div>
     <div style="margin-top:16px;text-align:center;">
       <button style="background:none;border:none;font-size:0.8rem;color:var(--text-sub);cursor:pointer;" onclick="showAdminModal()">관리자 로그인</button>
@@ -112,328 +109,303 @@
   </div>
 </div>
 
-<div class="modal-overlay hidden" id="adminModal">
-  <div class="modal">
+<div class="overlay" id="adminOverlay" style="display:none">
+  <div class="card">
     <h3>관리자 로그인</h3>
     <p>관리자 비밀번호를 입력하세요.</p>
     <input type="password" id="adminPw" placeholder="비밀번호">
-    <div class="error-msg" id="adminError">비밀번호가 올바르지 않습니다.</div>
-    <div class="modal-btns">
-      <button class="btn btn-secondary" onclick="hideAdminModal()">취소</button>
-      <button class="btn btn-primary" onclick="handleAdminLogin()">로그인</button>
+    <div class="errmsg" id="adminErr" style="display:none">비밀번호가 올바르지 않습니다.</div>
+    <div class="btn-row">
+      <button class="btn btn-gray" onclick="hideAdminModal()">취소</button>
+      <button class="btn btn-blue" onclick="doAdmin()">로그인</button>
     </div>
   </div>
 </div>
 
-<div class="dashboard-overlay hidden" id="dashboardOverlay">
-  <div class="dashboard">
-    <div class="dashboard-header">
+<div class="dboverlay" id="dbOverlay" style="display:none">
+  <div class="db">
+    <div class="dbhdr">
       <h2>📋 제출 현황 대시보드</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn-csv" onclick="exportCSV()">CSV 내보내기</button>
-        <button class="btn-del-all" onclick="deleteAll()">전체 삭제</button>
-        <button class="btn-close" onclick="closeDashboard()">닫기 ✕</button>
+        <button class="csvbtn" onclick="doCSV()">CSV 내보내기</button>
+        <button class="delbtn" onclick="doDelAll()">전체 삭제</button>
+        <button class="closebtn" onclick="closeDB()">닫기 ✕</button>
       </div>
     </div>
-    <div class="dashboard-stats">
-      <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-label">총 제출 수</div></div>
-      <div class="stat-box"><div class="stat-num" id="statAvgCurrent">-</div><div class="stat-label">현재 수준 평균</div></div>
-      <div class="stat-box"><div class="stat-num" id="statAvgFuture">-</div><div class="stat-label">미래 목표 평균</div></div>
+    <div class="dbstats">
+      <div class="statbox"><div class="statnum" id="statTotal">0</div><div class="statlabel">총 제출 수</div></div>
+      <div class="statbox"><div class="statnum" id="statC">-</div><div class="statlabel">현재 수준 평균</div></div>
+      <div class="statbox"><div class="statnum" id="statF">-</div><div class="statlabel">미래 목표 평균</div></div>
     </div>
-    <div class="submission-list" id="submissionList"><div class="empty-state">불러오는 중...</div></div>
+    <div class="sublist" id="subList"><div class="empty">불러오는 중...</div></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <header>
-  <div class="header-title">분석맵</div>
-  <div class="header-user">
-    <span id="headerUserName">-</span>
-    <button onclick="changeName()">변경</button>
-  </div>
+  <div class="htitle">분석맵</div>
+  <div class="huser"><span id="hname">-</span><button onclick="doChangeName()">변경</button></div>
 </header>
 
-<main id="mainContent" style="display:none;">
-  <div class="admin-bar hidden" id="adminBar">
-    <div class="admin-bar-left">🔧 관리자 모드</div>
-    <div class="admin-bar-right">
-      <button class="btn-admin-sm btn-view" onclick="openDashboard()">📋 제출 현황 보기</button>
-      <button class="btn-admin-sm btn-logout" onclick="adminLogout()">로그아웃</button>
+<main id="mainWrap" style="display:none">
+  <div class="adminbar" id="adminBar" style="display:none">
+    <div class="adminbar-l">🔧 관리자 모드</div>
+    <div class="adminbar-r">
+      <button class="abtn abtn-blue" onclick="openDB()">📋 제출 현황 보기</button>
+      <button class="abtn abtn-gray" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">1</span> 점수 입력</div>
-    <div id="areasContainer"></div>
+  <div class="sc">
+    <div class="stitle"><span class="snum">1</span> 점수 입력</div>
+    <div id="areasWrap"></div>
   </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">2</span> 균형감 점검맵</div>
-    <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
-    <div class="chart-legend">
-      <div><span class="legend-dot" style="background:#3b82f6;"></span>현재 수준</div>
-      <div><span class="legend-dot" style="background:#f59e0b;"></span>미래의 나의 모습</div>
+  <div class="sc">
+    <div class="stitle"><span class="snum">2</span> 균형감 점검맵</div>
+    <div class="cwrap"><canvas id="radar"></canvas></div>
+    <div class="clegend">
+      <div><span class="ldot" style="background:#3b82f6"></span>현재 수준</div>
+      <div><span class="ldot" style="background:#f59e0b"></span>미래의 나의 모습</div>
     </div>
     <div style="margin-top:20px;">
       <div style="font-size:0.95rem;font-weight:700;margin-bottom:12px;">영역별 갭 분석 — 개선 우선순위</div>
-      <div class="gap-list" id="gapList"><div style="color:var(--text-sub);font-size:0.85rem;">점수를 입력하면 갭 분석이 표시됩니다.</div></div>
+      <div class="glist" id="gapList"></div>
     </div>
   </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">3</span> 가장 큰 갭, 왜 그렇게 생각하시나요?</div>
-    <div class="gap-highlight hidden" id="biggestGapLabel"></div>
-    <textarea class="reason-area" id="reasonText" placeholder="이유를 입력해주세요." maxlength="500" oninput="updateCharCount()"></textarea>
-    <div class="char-count"><span id="charCount">0</span> / 500자</div>
+  <div class="sc">
+    <div class="stitle"><span class="snum">3</span> 가장 큰 갭, 왜 그렇게 생각하시나요?</div>
+    <div class="ghigh" id="bigGap" style="display:none"></div>
+    <textarea class="ra" id="reason" placeholder="이유를 입력해주세요." maxlength="500" oninput="updateCC()"></textarea>
+    <div class="cc"><span id="cc">0</span> / 500자</div>
   </div>
-  <div class="section-card">
-    <div class="section-title"><span class="section-num">4</span> 향후 나의 활동</div>
+  <div class="sc">
+    <div class="stitle"><span class="snum">4</span> 향후 나의 활동</div>
     <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">활동 1 — 현장 적용 액션</div>
-    <div class="action-item"><label>1. 무엇을 당장 내일부터 실천할지</label><input type="text" id="action1" placeholder="구체적으로 입력해주세요"></div>
-    <div class="action-item"><label>2. 언제까지 완료할지</label><input type="text" id="action2" placeholder="예: 2주 이내, 이번 달 말까지"></div>
-    <div class="action-item"><label>3. 누구에게 도움을 요청할지</label><input type="text" id="action3" placeholder="예: 팀장님, 동료 OOO"></div>
-    <hr class="action-divider">
+    <div class="ai"><label>1. 무엇을 당장 내일부터 실천할지</label><input type="text" id="a1" placeholder="구체적으로 입력해주세요"></div>
+    <div class="ai"><label>2. 언제까지 완료할지</label><input type="text" id="a2" placeholder="예: 2주 이내, 이번 달 말까지"></div>
+    <div class="ai"><label>3. 누구에게 도움을 요청할지</label><input type="text" id="a3" placeholder="예: 팀장님, 동료 OOO"></div>
+    <hr class="adiv">
     <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">활동 2 — 나에게 쓰는 편지</div>
-    <div class="action-item"><label>90일 뒤 나에게 쓰는 편지 (선택사항)</label><textarea id="letter" placeholder="미래의 나에게..." rows="5"></textarea></div>
-    <div class="action-item"><label>이메일 주소 (선택사항)</label><input type="email" id="email" placeholder="your@email.com"></div>
-    <div class="submit-area">
-      <button class="btn-submit" onclick="submitAll()">제출하기</button>
-      <button class="btn-save" onclick="saveLocal()">일부 저장</button>
+    <div class="ai"><label>90일 뒤 나에게 쓰는 편지 (선택사항)</label><textarea id="letter" placeholder="미래의 나에게..." rows="5"></textarea></div>
+    <div class="ai"><label>이메일 주소 (선택사항)</label><input type="email" id="email" placeholder="your@email.com"></div>
+    <div class="subarea">
+      <button class="subbtn" onclick="doSubmit()">제출하기</button>
+      <button class="savebtn" onclick="doSave()">일부 저장</button>
     </div>
-    <div class="save-status" id="saveStatus">마지막 저장: 없음</div>
+    <div class="savestatus" id="saveStatus">마지막 저장: 없음</div>
   </div>
 </main>
 
 <footer>© re:Box Consulting · Proprietary · 무단배포금지</footer>
 
 <script>
-// 페이지 로드 시 항상 세션 초기화
-localStorage.clear();
-
-const SUPABASE_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
-const ATTENDEE_PW = 'spider';
-const ADMIN_PW = 'admin1234';
+const SB_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
+const SB_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
+const PW_ATTENDEE = 'spider';
+const PW_ADMIN = 'admin1234';
 const AREAS = [
-  { key:'area1', label:'목표 관리', desc:'팀의 목표를 명확히 설정하고 달성을 촉진하는 역량' },
-  { key:'area2', label:'관계 관리', desc:'팀원과의 신뢰 관계를 구축하고 유지하는 역량' },
-  { key:'area3', label:'성과 관리', desc:'성과를 측정하고 피드백으로 발전을 이끄는 역량' },
+  {key:'k1', label:'목표 관리', desc:'팀의 목표를 명확히 설정하고 달성을 촉진하는 역량'},
+  {key:'k2', label:'관계 관리', desc:'팀원과의 신뢰 관계를 구축하고 유지하는 역량'},
+  {key:'k3', label:'성과 관리', desc:'성과를 측정하고 피드백으로 발전을 이끄는 역량'},
 ];
-let state = { userName:'', isAdmin:false, scores:{} };
 
-// 항상 입장 모달 표시
-document.getElementById('entryModal').classList.remove('hidden');
-document.getElementById('mainContent').style.display = 'none';
-document.getElementById('adminBar').classList.add('hidden');
+let userName = '';
+let isAdmin = false;
+let scores = {};
+AREAS.forEach(a => { scores[a.key] = {c:5, f:7}; });
 
-async function sbFetch(path, options={}) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...options,
-    headers:{ 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}`, 'Content-Type':'application/json', 'Prefer':options.prefer||'return=representation', ...(options.headers||{}) },
+async function sbReq(path, opts={}) {
+  const r = await fetch(SB_URL+'/rest/v1/'+path, {
+    ...opts,
+    headers: {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':opts.prefer||'return=representation',...(opts.headers||{})}
   });
-  if (!res.ok) { const err=await res.text(); throw new Error(err); }
-  return options.noJson ? res : res.json();
-}
-async function insertSubmission(data) { return sbFetch('submissions',{method:'POST',body:JSON.stringify(data),prefer:'return=minimal',noJson:true}); }
-async function fetchSubmissions() { return sbFetch('submissions?select=*&order=created_at.desc'); }
-async function deleteAllSubmissions() { return sbFetch('submissions?id=gte.0',{method:'DELETE',noJson:true}); }
-
-function init() { renderAreas(); initChart(); }
-
-function renderAreas() {
-  document.getElementById('areasContainer').innerHTML = AREAS.map(a=>`
-    <div class="area-block">
-      <div class="area-label">${a.label}</div>
-      <div class="area-desc">${a.desc}</div>
-      <div class="score-row">
-        <div class="score-input-wrap">
-          <label>현재 수준</label>
-          <div class="score-val" id="${a.key}_c_val">5</div>
-          <input type="range" min="1" max="10" value="5" id="${a.key}_c" oninput="onScore('${a.key}','current',this.value)">
-          <div class="score-display"><span>1</span><span>10</span></div>
-        </div>
-        <div class="score-input-wrap">
-          <label>미래의 나의 모습</label>
-          <div class="score-val" id="${a.key}_f_val">7</div>
-          <input type="range" min="1" max="10" value="7" id="${a.key}_f" oninput="onScore('${a.key}','future',this.value)">
-          <div class="score-display"><span>1</span><span>10</span></div>
-        </div>
-      </div>
-    </div>`).join('');
-  AREAS.forEach(a=>{ state.scores[a.key]={current:5,future:7}; });
+  if (!r.ok) throw new Error(await r.text());
+  return opts.raw ? r : r.json();
 }
 
-let radarChart;
+function showAdminModal() { document.getElementById('adminOverlay').style.display='flex'; }
+function hideAdminModal() { document.getElementById('adminOverlay').style.display='none'; document.getElementById('adminErr').style.display='none'; }
+
+function doEntry() {
+  const name = document.getElementById('entryName').value.trim();
+  const pw = document.getElementById('entryPw').value.trim();
+  const err = document.getElementById('entryErr');
+  if (!name) { err.textContent='이름을 입력해주세요.'; err.style.display='block'; return; }
+  if (pw !== PW_ATTENDEE) { err.textContent='입장 암호가 올바르지 않습니다.'; err.style.display='block'; return; }
+  err.style.display = 'none';
+  userName = name;
+  isAdmin = false;
+  document.getElementById('hname').textContent = name;
+  document.getElementById('entryOverlay').style.display = 'none';
+  document.getElementById('mainWrap').style.display = 'block';
+  document.getElementById('adminBar').style.display = 'none';
+  updateChart();
+}
+
+function doAdmin() {
+  const pw = document.getElementById('adminPw').value;
+  const err = document.getElementById('adminErr');
+  if (pw !== PW_ADMIN) { err.style.display='block'; return; }
+  err.style.display = 'none';
+  userName = '관리자';
+  isAdmin = true;
+  document.getElementById('hname').textContent = '관리자';
+  document.getElementById('adminOverlay').style.display = 'none';
+  document.getElementById('entryOverlay').style.display = 'none';
+  document.getElementById('mainWrap').style.display = 'block';
+  document.getElementById('adminBar').style.display = 'flex';
+  updateChart();
+}
+
+function doLogout() {
+  isAdmin = false;
+  userName = '';
+  AREAS.forEach(a => { scores[a.key] = {c:5, f:7}; });
+  document.getElementById('mainWrap').style.display = 'none';
+  document.getElementById('adminBar').style.display = 'none';
+  document.getElementById('entryOverlay').style.display = 'flex';
+  document.getElementById('entryName').value = '';
+  document.getElementById('entryPw').value = '';
+  showToast('로그아웃 되었습니다.');
+}
+
+function doChangeName() {
+  const n = prompt('새 이름을 입력하세요:');
+  if (n && n.trim()) { userName=n.trim(); document.getElementById('hname').textContent=userName; showToast('이름이 변경되었습니다.'); }
+}
+
+let chart;
 function initChart() {
-  const ctx = document.getElementById('radarChart').getContext('2d');
-  radarChart = new Chart(ctx,{
+  const ctx = document.getElementById('radar').getContext('2d');
+  chart = new Chart(ctx, {
     type:'radar',
-    data:{ labels:AREAS.map(a=>a.label), datasets:[
-      {label:'현재 수준', data:AREAS.map(()=>5), backgroundColor:'rgba(59,130,246,0.15)', borderColor:'#3b82f6', pointBackgroundColor:'#3b82f6', borderWidth:2},
-      {label:'미래의 나의 모습', data:AREAS.map(()=>7), backgroundColor:'rgba(245,158,11,0.15)', borderColor:'#f59e0b', pointBackgroundColor:'#f59e0b', borderWidth:2}
-    ]},
+    data:{
+      labels: AREAS.map(a=>a.label),
+      datasets:[
+        {label:'현재 수준', data:AREAS.map(()=>5), backgroundColor:'rgba(59,130,246,0.15)', borderColor:'#3b82f6', pointBackgroundColor:'#3b82f6', borderWidth:2},
+        {label:'미래의 나의 모습', data:AREAS.map(()=>7), backgroundColor:'rgba(245,158,11,0.15)', borderColor:'#f59e0b', pointBackgroundColor:'#f59e0b', borderWidth:2}
+      ]
+    },
     options:{responsive:true, scales:{r:{min:0,max:10,ticks:{stepSize:2}}}, plugins:{legend:{display:false}}}
   });
 }
 
 function updateChart() {
-  radarChart.data.datasets[0].data = AREAS.map(a=>state.scores[a.key]?.current??5);
-  radarChart.data.datasets[1].data = AREAS.map(a=>state.scores[a.key]?.future??7);
-  radarChart.update();
+  chart.data.datasets[0].data = AREAS.map(a=>scores[a.key].c);
+  chart.data.datasets[1].data = AREAS.map(a=>scores[a.key].f);
+  chart.update();
   updateGap();
 }
 
 function updateGap() {
-  const gaps = AREAS.map(a=>({label:a.label,key:a.key,gap:(state.scores[a.key]?.future??7)-(state.scores[a.key]?.current??5)}));
-  const maxGap = Math.max(...gaps.map(g=>g.gap));
-  const maxGapArea = gaps.find(g=>g.gap===maxGap);
+  const gaps = AREAS.map(a=>({label:a.label, gap:scores[a.key].f - scores[a.key].c}));
+  const max = Math.max(...gaps.map(g=>g.gap));
+  const maxA = gaps.find(g=>g.gap===max);
   document.getElementById('gapList').innerHTML = gaps.sort((a,b)=>b.gap-a.gap).map(g=>`
-    <div class="gap-item">
-      <div class="gap-label">${g.label}</div>
-      <div class="gap-bar-wrap"><div class="gap-bar" style="width:${Math.max(0,g.gap)/9*100}%"></div></div>
-      <div class="gap-val">${g.gap>0?'+'+g.gap:g.gap}</div>
+    <div class="gitem">
+      <div class="glabel">${g.label}</div>
+      <div class="gbwrap"><div class="gbar" style="width:${Math.max(0,g.gap)/9*100}%"></div></div>
+      <div class="gval">${g.gap>0?'+'+g.gap:g.gap}</div>
     </div>`).join('');
-  const bl=document.getElementById('biggestGapLabel');
-  if(maxGap>0&&maxGapArea){bl.textContent=`🎯 가장 큰 갭: ${maxGapArea.label} (갭 +${maxGap})`;bl.classList.remove('hidden');}
-  else{bl.classList.add('hidden');}
+  const bg = document.getElementById('bigGap');
+  if (max>0&&maxA) { bg.textContent=`🎯 가장 큰 갭: ${maxA.label} (갭 +${max})`; bg.style.display='block'; }
+  else { bg.style.display='none'; }
 }
 
-function onScore(areaKey,type,val) {
-  val=parseInt(val);
-  state.scores[areaKey][type]=val;
-  document.getElementById(areaKey+(type==='current'?'_c_val':'_f_val')).textContent=val;
+function onScore(key, type, val) {
+  scores[key][type] = parseInt(val);
+  document.getElementById(key+'_'+type+'_v').textContent = val;
   updateChart();
 }
 
-function updateCharCount() { document.getElementById('charCount').textContent=document.getElementById('reasonText').value.length; }
+function updateCC() { document.getElementById('cc').textContent = document.getElementById('reason').value.length; }
 
-function saveLocal() {
-  localStorage.setItem('bm_draft_'+state.userName, JSON.stringify(gatherData()));
-  document.getElementById('saveStatus').textContent=`마지막 저장: ${new Date().toLocaleTimeString('ko-KR')}`;
+function renderAreas() {
+  document.getElementById('areasWrap').innerHTML = AREAS.map(a=>`
+    <div class="ablock">
+      <div class="alabel">${a.label}</div>
+      <div class="adesc">${a.desc}</div>
+      <div class="srow">
+        <div class="siwrap">
+          <label>현재 수준</label>
+          <div class="sval" id="${a.key}_c_v">5</div>
+          <input type="range" min="1" max="10" value="5" oninput="onScore('${a.key}','c',this.value)">
+          <div class="sdisplay"><span>1</span><span>10</span></div>
+        </div>
+        <div class="siwrap">
+          <label>미래의 나의 모습</label>
+          <div class="sval" id="${a.key}_f_v">7</div>
+          <input type="range" min="1" max="10" value="7" oninput="onScore('${a.key}','f',this.value)">
+          <div class="sdisplay"><span>1</span><span>10</span></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function getData() {
+  return { name:userName, scores:JSON.parse(JSON.stringify(scores)), reason:document.getElementById('reason').value, action1:document.getElementById('a1').value, action2:document.getElementById('a2').value, action3:document.getElementById('a3').value, letter:document.getElementById('letter').value, email:document.getElementById('email').value };
+}
+
+function doSave() {
+  sessionStorage.setItem('draft', JSON.stringify(getData()));
+  document.getElementById('saveStatus').textContent = '마지막 저장: '+new Date().toLocaleTimeString('ko-KR');
   showToast('임시 저장되었습니다.');
 }
 
-function loadLocal() {
-  const raw=localStorage.getItem('bm_draft_'+state.userName);
-  if(!raw) return;
+async function doSubmit() {
+  if (!userName) { showToast('이름을 먼저 입력해주세요.'); return; }
   try {
-    const data=JSON.parse(raw);
-    AREAS.forEach(a=>{
-      if(data.scores?.[a.key]){
-        state.scores[a.key]=data.scores[a.key];
-        document.getElementById(a.key+'_c').value=data.scores[a.key].current;
-        document.getElementById(a.key+'_f').value=data.scores[a.key].future;
-        document.getElementById(a.key+'_c_val').textContent=data.scores[a.key].current;
-        document.getElementById(a.key+'_f_val').textContent=data.scores[a.key].future;
-      }
-    });
-    if(data.reason) document.getElementById('reasonText').value=data.reason;
-    if(data.action1) document.getElementById('action1').value=data.action1;
-    if(data.action2) document.getElementById('action2').value=data.action2;
-    if(data.action3) document.getElementById('action3').value=data.action3;
-    if(data.letter) document.getElementById('letter').value=data.letter;
-    if(data.email) document.getElementById('email').value=data.email;
-    updateChart(); updateCharCount();
-  } catch(e){}
-}
-
-function gatherData() {
-  return { name:state.userName, scores:JSON.parse(JSON.stringify(state.scores)), reason:document.getElementById('reasonText').value, action1:document.getElementById('action1').value, action2:document.getElementById('action2').value, action3:document.getElementById('action3').value, letter:document.getElementById('letter').value, email:document.getElementById('email').value };
-}
-
-async function submitAll() {
-  if(!state.userName){showToast('이름을 먼저 입력해주세요.');return;}
-  try {
-    await insertSubmission(gatherData());
+    await sbReq('submissions', {method:'POST', body:JSON.stringify(getData()), prefer:'return=minimal', raw:true});
     showToast('✅ 제출 완료! 감사합니다.');
-    localStorage.removeItem('bm_draft_'+state.userName);
-    document.getElementById('saveStatus').textContent='제출 완료';
-  } catch(e){showToast('❌ 제출 오류: '+e.message);}
+    sessionStorage.removeItem('draft');
+    document.getElementById('saveStatus').textContent = '제출 완료';
+  } catch(e) { showToast('❌ 오류: '+e.message); }
 }
 
-function handleEntry() {
-  const name=document.getElementById('entryName').value.trim();
-  const pw=document.getElementById('entryPw').value.trim();
-  const errEl=document.getElementById('entryError');
-  if(!name){errEl.textContent='이름을 입력해주세요.';errEl.style.display='block';return;}
-  if(pw!==ATTENDEE_PW){errEl.textContent='입장 암호가 올바르지 않습니다.';errEl.style.display='block';return;}
-  errEl.style.display='none';
-  state.userName=name;
-  document.getElementById('headerUserName').textContent=name;
-  document.getElementById('entryModal').classList.add('hidden');
-  document.getElementById('mainContent').style.display='block';
-  loadLocal(); updateChart();
-}
+async function openDB() { document.getElementById('dbOverlay').style.display='flex'; await loadDB(); }
+function closeDB() { document.getElementById('dbOverlay').style.display='none'; }
 
-function changeName() {
-  const n=prompt('새 이름을 입력하세요:');
-  if(n&&n.trim()){state.userName=n.trim();document.getElementById('headerUserName').textContent=state.userName;showToast('이름이 변경되었습니다.');}
-}
-
-function showAdminModal(){document.getElementById('adminModal').classList.remove('hidden');}
-function hideAdminModal(){document.getElementById('adminModal').classList.add('hidden');}
-
-function handleAdminLogin() {
-  const pw=document.getElementById('adminPw').value;
-  const errEl=document.getElementById('adminError');
-  if(pw!==ADMIN_PW){errEl.style.display='block';return;}
-  errEl.style.display='none';
-  state.isAdmin=true; state.userName='관리자';
-  document.getElementById('headerUserName').textContent='관리자';
-  document.getElementById('adminModal').classList.add('hidden');
-  document.getElementById('entryModal').classList.add('hidden');
-  document.getElementById('mainContent').style.display='block';
-  document.getElementById('adminBar').classList.remove('hidden');
-  updateChart(); showToast('관리자 모드로 로그인했습니다.');
-}
-
-function adminLogout(){
-  state.isAdmin=false;
-  document.getElementById('adminBar').classList.add('hidden');
-  document.getElementById('mainContent').style.display='none';
-  document.getElementById('entryModal').classList.remove('hidden');
-  showToast('로그아웃 되었습니다.');
-}
-
-async function openDashboard(){document.getElementById('dashboardOverlay').classList.remove('hidden');await loadDashboard();}
-function closeDashboard(){document.getElementById('dashboardOverlay').classList.add('hidden');}
-
-async function loadDashboard() {
-  const list=document.getElementById('submissionList');
-  list.innerHTML='<div class="empty-state">불러오는 중...</div>';
+async function loadDB() {
+  const list = document.getElementById('subList');
+  list.innerHTML = '<div class="empty">불러오는 중...</div>';
   try {
-    const submissions=await fetchSubmissions();
-    document.getElementById('statTotal').textContent=submissions.length;
-    if(!submissions.length){list.innerHTML='<div class="empty-state">아직 제출된 데이터가 없습니다.</div>';document.getElementById('statAvgCurrent').textContent='-';document.getElementById('statAvgFuture').textContent='-';return;}
+    const subs = await sbReq('submissions?select=*&order=created_at.desc');
+    document.getElementById('statTotal').textContent = subs.length;
+    if (!subs.length) { list.innerHTML='<div class="empty">제출 데이터가 없습니다.</div>'; document.getElementById('statC').textContent='-'; document.getElementById('statF').textContent='-'; return; }
     let tc=0,tf=0,cnt=0;
-    submissions.forEach(s=>{if(s.scores)Object.values(s.scores).forEach(sc=>{tc+=sc.current||0;tf+=sc.future||0;cnt++;});});
-    document.getElementById('statAvgCurrent').textContent=cnt?(tc/cnt).toFixed(1):'-';
-    document.getElementById('statAvgFuture').textContent=cnt?(tf/cnt).toFixed(1):'-';
-    list.innerHTML=submissions.map(s=>{
-      const badges=Object.entries(s.scores||{}).map(([k,v])=>{const a=AREAS.find(x=>x.key===k);return `<div class="score-badge">${a?.label||k}: 현재 <strong>${v.current}</strong> → 목표 <strong>${v.future}</strong></div>`;}).join('');
-      return `<div class="submission-item"><div class="submission-name">${s.name||'이름없음'} <span>${s.created_at?new Date(s.created_at).toLocaleString('ko-KR'):''}</span></div><div class="submission-scores">${badges}</div>${s.reason?`<div class="submission-reason">💬 ${s.reason}</div>`:''} ${s.action1?`<div class="submission-actions-text">✅ 실천: ${s.action1} / 기한: ${s.action2||'-'} / 도움: ${s.action3||'-'}</div>`:''}</div>`;
+    subs.forEach(s=>{ if(s.scores) Object.values(s.scores).forEach(v=>{ tc+=v.c||0; tf+=v.f||0; cnt++; }); });
+    document.getElementById('statC').textContent = cnt?(tc/cnt).toFixed(1):'-';
+    document.getElementById('statF').textContent = cnt?(tf/cnt).toFixed(1):'-';
+    list.innerHTML = subs.map(s=>{
+      const badges = Object.entries(s.scores||{}).map(([k,v])=>{ const a=AREAS.find(x=>x.key===k); return `<div class="sbadge">${a?.label||k}: 현재 <strong>${v.c}</strong> → 목표 <strong>${v.f}</strong></div>`; }).join('');
+      const dt = s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : '';
+      return `<div class="subitem"><div class="subname">${s.name||'이름없음'} <span>${dt}</span></div><div class="subscores">${badges}</div>${s.reason?`<div class="subreason">💬 ${s.reason}</div>`:''} ${s.action1?`<div class="subact">✅ 실천: ${s.action1} / 기한: ${s.action2||'-'} / 도움: ${s.action3||'-'}</div>`:''}</div>`;
     }).join('');
-  } catch(e){list.innerHTML=`<div class="empty-state">오류: ${e.message}</div>`;}
+  } catch(e) { list.innerHTML=`<div class="empty">오류: ${e.message}</div>`; }
 }
 
-async function deleteAll() {
-  if(!confirm('전체 삭제하시겠습니까?'))return;
-  try{await deleteAllSubmissions();showToast('전체 삭제 완료');await loadDashboard();}catch(e){showToast('오류: '+e.message);}
+async function doDelAll() {
+  if (!confirm('전체 삭제하시겠습니까?')) return;
+  try { await sbReq('submissions?id=gte.0',{method:'DELETE',raw:true}); showToast('전체 삭제 완료'); await loadDB(); }
+  catch(e) { showToast('오류: '+e.message); }
 }
 
-async function exportCSV() {
+async function doCSV() {
   try {
-    const submissions=await fetchSubmissions();
-    if(!submissions.length){showToast('데이터가 없습니다.');return;}
-    const headers=['이름','제출일시',...AREAS.map(a=>a.label+'_현재'),...AREAS.map(a=>a.label+'_목표'),'이유','실천사항','기한','도움요청','편지','이메일'];
-    const rows=submissions.map(s=>[s.name,s.created_at?new Date(s.created_at).toLocaleString('ko-KR'):'',...AREAS.map(a=>s.scores?.[a.key]?.current??''),...AREAS.map(a=>s.scores?.[a.key]?.future??''),s.reason||'',s.action1||'',s.action2||'',s.action3||'',s.letter||'',s.email||'']);
-    const csv='\uFEFF'+[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=`제출현황_${new Date().toLocaleDateString('ko-KR')}.csv`;a.click();
+    const subs = await sbReq('submissions?select=*&order=created_at.desc');
+    if (!subs.length) { showToast('데이터가 없습니다.'); return; }
+    const h = ['이름','제출일시',...AREAS.map(a=>a.label+'_현재'),...AREAS.map(a=>a.label+'_목표'),'이유','실천사항','기한','도움요청','편지','이메일'];
+    const rows = subs.map(s=>[s.name,s.created_at?new Date(s.created_at).toLocaleString('ko-KR'):'',...AREAS.map(a=>s.scores?.[a.key]?.c??''),...AREAS.map(a=>s.scores?.[a.key]?.f??''),s.reason||'',s.action1||'',s.action2||'',s.action3||'',s.letter||'',s.email||'']);
+    const csv='\uFEFF'+[h,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); a.download=`제출현황_${new Date().toLocaleDateString('ko-KR')}.csv`; a.click();
     showToast('CSV 다운로드 완료');
-  } catch(e){showToast('오류: '+e.message);}
+  } catch(e) { showToast('오류: '+e.message); }
 }
 
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
 
-init();
+renderAreas();
+initChart();
 </script>
 </body>
 </html>
