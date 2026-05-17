@@ -21,8 +21,6 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-  /* MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
   .modal-overlay.hidden { display: none; }
   .modal { background: var(--card); border-radius: var(--radius); padding: 32px; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
@@ -38,20 +36,14 @@
   .btn-secondary:hover { background: #cbd5e1; }
   .btn-danger { background: var(--danger); color: white; }
   .error-msg { color: var(--danger); font-size: 0.85rem; margin-bottom: 10px; display: none; }
-
-  /* HEADER */
   header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .header-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
   .header-user { font-size: 0.85rem; color: var(--text-sub); display: flex; align-items: center; gap: 8px; }
   .header-user button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; color: var(--text-sub); }
-
-  /* MAIN */
   main { max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
   .section-card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid var(--border); }
   .section-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--primary); color: white; border-radius: 50%; font-size: 0.85rem; font-weight: 700; margin-right: 10px; }
   .section-title { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; margin-bottom: 16px; }
-
-  /* SCORE INPUTS */
   .area-block { margin-bottom: 20px; }
   .area-label { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
   .area-desc { font-size: 0.82rem; color: var(--text-sub); margin-bottom: 10px; }
@@ -60,48 +52,34 @@
   .score-input-wrap input[type=range] { width: 100%; accent-color: var(--primary); }
   .score-display { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-sub); }
   .score-val { font-size: 1.2rem; font-weight: 800; color: var(--primary); text-align: center; }
-
-  /* CHART */
   .chart-wrap { position: relative; width: 100%; max-width: 340px; margin: 0 auto; }
   .chart-legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 0.82rem; }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-
-  /* GAP */
   .gap-list { display: flex; flex-direction: column; gap: 10px; }
   .gap-item { display: flex; align-items: center; gap: 12px; }
   .gap-label { font-size: 0.85rem; font-weight: 600; width: 120px; flex-shrink: 0; }
   .gap-bar-wrap { flex: 1; background: #f1f5f9; border-radius: 99px; height: 12px; overflow: hidden; }
   .gap-bar { height: 100%; border-radius: 99px; background: var(--accent); transition: width 0.4s; }
   .gap-val { font-size: 0.85rem; font-weight: 700; width: 36px; text-align: right; color: var(--text-sub); }
-
-  /* TEXTAREA */
   .reason-area { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; resize: vertical; min-height: 90px; font-family: inherit; outline: none; transition: border-color 0.2s; }
   .reason-area:focus { border-color: var(--primary); }
   .char-count { text-align: right; font-size: 0.8rem; color: var(--text-sub); margin-top: 4px; }
-
-  /* ACTION */
   .action-item { margin-bottom: 16px; }
   .action-item label { font-size: 0.88rem; font-weight: 600; display: block; margin-bottom: 6px; color: var(--text); }
   .action-item input, .action-item textarea { width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; outline: none; transition: border-color 0.2s; resize: vertical; }
   .action-item input:focus, .action-item textarea:focus { border-color: var(--primary); }
   .action-divider { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
-
-  /* SUBMIT BTNS */
   .submit-area { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
   .btn-submit { background: var(--primary); color: white; padding: 14px 28px; border-radius: 10px; border: none; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-submit:hover { background: var(--primary-dark); transform: translateY(-1px); }
   .btn-save { background: var(--bg); color: var(--text); padding: 14px 20px; border-radius: 10px; border: 2px solid var(--border); font-size: 0.95rem; font-weight: 600; cursor: pointer; }
   .save-status { font-size: 0.82rem; color: var(--text-sub); margin-top: 10px; }
-
-  /* ADMIN */
   .admin-bar { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   .admin-bar-left { font-size: 0.88rem; font-weight: 600; color: #92400e; }
   .admin-bar-right { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn-admin-sm { padding: 7px 14px; border-radius: 7px; border: none; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
   .btn-view { background: var(--primary); color: white; }
   .btn-logout { background: #e5e7eb; color: #374151; }
-
-  /* DASHBOARD */
   .dashboard-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: flex; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .dashboard-overlay.hidden { display: none; }
   .dashboard { background: var(--card); border-radius: var(--radius); width: 100%; max-width: 800px; padding: 28px; }
@@ -124,17 +102,11 @@
   .btn-del-all { background: var(--danger); color: white; padding: 8px 16px; border-radius: 7px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
   .btn-close { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 8px 16px; font-size: 0.85rem; cursor: pointer; }
   .empty-state { text-align: center; padding: 40px; color: var(--text-sub); }
-
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 99px; font-size: 0.9rem; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
   .toast.show { opacity: 1; }
-
   .gap-highlight { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px 16px; font-size: 0.9rem; font-weight: 600; color: #92400e; margin-bottom: 12px; }
-
   footer { text-align: center; font-size: 0.78rem; color: var(--text-sub); padding: 20px; }
-
-  /* 로딩 스피너 */
   .btn-loading { opacity: 0.7; cursor: not-allowed; }
-
   @media (max-width: 480px) {
     .score-row { grid-template-columns: 1fr; }
     .dashboard-stats { grid-template-columns: 1fr 1fr; }
@@ -143,7 +115,6 @@
 </head>
 <body>
 
-<!-- ENTRY MODAL -->
 <div class="modal-overlay" id="entryModal">
   <div class="modal">
     <h3>입장하기</h3>
@@ -160,7 +131,6 @@
   </div>
 </div>
 
-<!-- ADMIN LOGIN MODAL (이메일+비밀번호 → Supabase Auth) -->
 <div class="modal-overlay hidden" id="adminModal">
   <div class="modal">
     <h3>관리자 로그인</h3>
@@ -175,7 +145,6 @@
   </div>
 </div>
 
-<!-- DASHBOARD OVERLAY -->
 <div class="dashboard-overlay hidden" id="dashboardOverlay">
   <div class="dashboard">
     <div class="dashboard-header">
@@ -197,10 +166,8 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- HEADER -->
 <header>
   <div class="header-title">분석맵</div>
   <div class="header-user">
@@ -210,8 +177,6 @@
 </header>
 
 <main id="mainContent" style="display:none;">
-
-  <!-- ADMIN BAR -->
   <div class="admin-bar hidden" id="adminBar">
     <div class="admin-bar-left">🔧 관리자 모드</div>
     <div class="admin-bar-right">
@@ -219,44 +184,30 @@
       <button class="btn-admin-sm btn-logout" onclick="adminLogout()">로그아웃</button>
     </div>
   </div>
-
-  <!-- SECTION 1: SCORE INPUT -->
   <div class="section-card">
     <div class="section-title"><span class="section-num">1</span> 점수 입력</div>
     <div id="areasContainer"></div>
   </div>
-
-  <!-- SECTION 2: CHART -->
   <div class="section-card">
     <div class="section-title"><span class="section-num">2</span> 균형감 점검맵</div>
-    <div class="chart-wrap">
-      <canvas id="radarChart"></canvas>
-    </div>
+    <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
     <div class="chart-legend">
       <div><span class="legend-dot" style="background:#3b82f6;"></span>현재 수준</div>
       <div><span class="legend-dot" style="background:#f59e0b;"></span>미래의 나의 모습</div>
     </div>
-
     <div style="margin-top:20px;">
       <div style="font-size:0.95rem;font-weight:700;margin-bottom:12px;">영역별 갭 분석 — 개선 우선순위</div>
-      <div class="gap-list" id="gapList">
-        <div style="color:var(--text-sub);font-size:0.85rem;">점수를 모두 입력하면 갭 분석이 표시됩니다.</div>
-      </div>
+      <div class="gap-list" id="gapList"></div>
     </div>
   </div>
-
-  <!-- SECTION 3: REASON -->
   <div class="section-card">
     <div class="section-title"><span class="section-num">3</span> 가장 큰 갭, 왜 그렇게 생각하시나요?</div>
     <div class="gap-highlight hidden" id="biggestGapLabel"></div>
-    <textarea class="reason-area" id="reasonText" placeholder="세 영역의 점수를 모두 입력하면 가장 갭이 큰 영역이 표시됩니다." maxlength="500" oninput="updateCharCount()"></textarea>
+    <textarea class="reason-area" id="reasonText" placeholder="이유를 입력해주세요." maxlength="500" oninput="updateCharCount()"></textarea>
     <div class="char-count"><span id="charCount">0</span> / 500자</div>
   </div>
-
-  <!-- SECTION 4: ACTION -->
   <div class="section-card">
     <div class="section-title"><span class="section-num">4</span> 향후 나의 활동</div>
-
     <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">활동 1 — 현장 적용 액션</div>
     <div class="action-item">
       <label>1. 무엇을 당장 내일부터 실천할지</label>
@@ -267,58 +218,42 @@
       <input type="text" id="action2" placeholder="예: 2주 이내, 이번 달 말까지">
     </div>
     <div class="action-item">
-      <label>3. 이것이 실현되려면 누구에게 도움을 요청할지</label>
+      <label>3. 누구에게 도움을 요청할지</label>
       <input type="text" id="action3" placeholder="예: 팀장님, 동료 OOO">
     </div>
-
     <hr class="action-divider">
-
     <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">활동 2 — 나에게 쓰는 편지</div>
     <div class="action-item">
-      <label>90일 뒤에 받고 싶은 나에게 쓰는 편지를 자유롭게 작성해보세요. (선택사항)</label>
+      <label>90일 뒤 나에게 쓰는 편지 (선택사항)</label>
       <textarea id="letter" placeholder="미래의 나에게..." rows="5"></textarea>
     </div>
     <div class="action-item">
-      <label>이메일 주소 (선택사항) — 입력 시 90일 뒤 편지를 이메일로 받을 수 있습니다</label>
+      <label>이메일 주소 (선택사항)</label>
       <input type="email" id="email" placeholder="your@email.com">
     </div>
-
     <div class="submit-area">
       <button class="btn-submit" onclick="submitAll()">제출하기</button>
-      <button class="btn-save" onclick="saveLocal()">일부 저장</button>
+      <button class="btn-save" onclick="saveLocal()">임시 저장</button>
     </div>
     <div class="save-status" id="saveStatus">마지막 저장: 없음</div>
   </div>
-
 </main>
 
 <footer>© re:Box Consulting · Proprietary · 무단배포금지</footer>
 
 <script>
-// ========== CONFIG ==========
 const SUPABASE_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
-const ATTENDEE_PW = 'spider'; // 참석자 입장 암호 (필요 시 변경)
-// ⚠️ ADMIN_PW 제거됨 — 관리자 인증은 Supabase Auth(이메일+비밀번호)로 처리
+const ATTENDEE_PW = 'spider';
 
-// ========== AREAS CONFIG ==========
 const AREAS = [
   { key: 'area1', label: '목표 관리', desc: '팀의 목표를 명확히 설정하고 달성을 촉진하는 역량' },
   { key: 'area2', label: '관계 관리', desc: '팀원과의 신뢰 관계를 구축하고 유지하는 역량' },
   { key: 'area3', label: '성과 관리', desc: '성과를 측정하고 피드백으로 발전을 이끄는 역량' },
 ];
 
-// ========== STATE ==========
-let state = {
-  userName: '',
-  isAdmin: false,
-  adminToken: null,   // Supabase Auth JWT
-  scores: {},
-};
+let state = { userName: '', isAdmin: false, adminToken: null, scores: {} };
 
-// ========== SUPABASE HELPERS ==========
-
-// 일반 API 호출 (학습자 데이터 제출 등)
 async function sbFetch(path, options = {}) {
   const headers = {
     'apikey': SUPABASE_KEY,
@@ -327,78 +262,52 @@ async function sbFetch(path, options = {}) {
     'Prefer': options.prefer || 'return=representation',
     ...(options.headers || {}),
   };
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...options,
-    headers,
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err);
-  }
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers });
+  if (!res.ok) { const err = await res.text(); throw new Error(err); }
   return options.noJson ? res : res.json();
 }
 
-// Supabase Auth 로그인 → JWT 반환
 async function supabaseAuthSignIn(email, password) {
   const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
     method: 'POST',
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  if (!res.ok) {
-    throw new Error('인증 실패');
-  }
-  return res.json(); // { access_token, ... }
+  if (!res.ok) throw new Error('인증 실패');
+  return res.json();
 }
 
-// Supabase Auth 로그아웃
 async function supabaseAuthSignOut(token) {
   await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
     method: 'POST',
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${token}` },
   });
 }
 
 async function insertSubmission(data) {
-  return sbFetch('submissions', {
-    method: 'POST',
-    body: JSON.stringify(data),
-    prefer: 'return=minimal',
-    noJson: true,
-  });
+  return sbFetch('submissions', { method: 'POST', body: JSON.stringify(data), prefer: 'return=minimal', noJson: true });
 }
-
 async function fetchSubmissions() {
   return sbFetch('submissions?select=*&order=created_at.desc');
 }
-
 async function deleteAllSubmissions() {
-  return sbFetch('submissions?id=gte.0', {
-    method: 'DELETE',
-    noJson: true,
-  });
+  return sbFetch('submissions?id=neq.null', { method: 'DELETE', noJson: true });
 }
 
-// ========== INIT ==========
 function init() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('new') === '1') {
-    Object.keys(localStorage).filter(k => k.startsWith('bm_draft_')).forEach(k => localStorage.removeItem(k));
+    localStorage.clear();
+    sessionStorage.clear();
   }
-
+  state.isAdmin = false;
+  state.adminToken = null;
+  state.userName = '';
   renderAreas();
   initChart();
-
   document.getElementById('entryModal').classList.remove('hidden');
   document.getElementById('mainContent').style.display = 'none';
-
-  // Enter 키 지원
+  document.getElementById('adminBar').classList.add('hidden');
   document.getElementById('entryPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleEntry(); });
   document.getElementById('adminPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleAdminLogin(); });
 }
@@ -413,27 +322,21 @@ function renderAreas() {
         <div class="score-input-wrap">
           <label>현재 수준</label>
           <div class="score-val" id="${area.key}_c_val">5</div>
-          <input type="range" min="1" max="10" value="5" id="${area.key}_c"
-            oninput="onScore('${area.key}','current',this.value)">
+          <input type="range" min="1" max="10" value="5" id="${area.key}_c" oninput="onScore('${area.key}','current',this.value)">
           <div class="score-display"><span>1</span><span>10</span></div>
         </div>
         <div class="score-input-wrap">
           <label>미래의 나의 모습</label>
           <div class="score-val" id="${area.key}_f_val">7</div>
-          <input type="range" min="1" max="10" value="7" id="${area.key}_f"
-            oninput="onScore('${area.key}','future',this.value)">
+          <input type="range" min="1" max="10" value="7" id="${area.key}_f" oninput="onScore('${area.key}','future',this.value)">
           <div class="score-display"><span>1</span><span>10</span></div>
         </div>
       </div>
     </div>
   `).join('');
-
-  AREAS.forEach(a => {
-    state.scores[a.key] = { current: 5, future: 7 };
-  });
+  AREAS.forEach(a => { state.scores[a.key] = { current: 5, future: 7 }; });
 }
 
-// ========== CHART ==========
 let radarChart;
 function initChart() {
   const ctx = document.getElementById('radarChart').getContext('2d');
@@ -442,29 +345,11 @@ function initChart() {
     data: {
       labels: AREAS.map(a => a.label),
       datasets: [
-        {
-          label: '현재 수준',
-          data: AREAS.map(() => 5),
-          backgroundColor: 'rgba(59,130,246,0.15)',
-          borderColor: '#3b82f6',
-          pointBackgroundColor: '#3b82f6',
-          borderWidth: 2,
-        },
-        {
-          label: '미래의 나의 모습',
-          data: AREAS.map(() => 7),
-          backgroundColor: 'rgba(245,158,11,0.15)',
-          borderColor: '#f59e0b',
-          pointBackgroundColor: '#f59e0b',
-          borderWidth: 2,
-        }
+        { label: '현재 수준', data: AREAS.map(() => 5), backgroundColor: 'rgba(59,130,246,0.15)', borderColor: '#3b82f6', pointBackgroundColor: '#3b82f6', borderWidth: 2 },
+        { label: '미래의 나의 모습', data: AREAS.map(() => 7), backgroundColor: 'rgba(245,158,11,0.15)', borderColor: '#f59e0b', pointBackgroundColor: '#f59e0b', borderWidth: 2 }
       ]
     },
-    options: {
-      responsive: true,
-      scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } },
-      plugins: { legend: { display: false } }
-    }
+    options: { responsive: true, scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }, plugins: { legend: { display: false } } }
   });
 }
 
@@ -476,54 +361,36 @@ function updateChart() {
 }
 
 function updateGap() {
-  const gaps = AREAS.map(a => ({
-    label: a.label,
-    key: a.key,
-    gap: (state.scores[a.key]?.future ?? 7) - (state.scores[a.key]?.current ?? 5),
-  }));
+  const gaps = AREAS.map(a => ({ label: a.label, key: a.key, gap: (state.scores[a.key]?.future ?? 7) - (state.scores[a.key]?.current ?? 5) }));
   const maxGap = Math.max(...gaps.map(g => g.gap));
   const maxGapArea = gaps.find(g => g.gap === maxGap);
-
-  const gapList = document.getElementById('gapList');
-  gapList.innerHTML = gaps.sort((a,b) => b.gap - a.gap).map(g => `
+  document.getElementById('gapList').innerHTML = gaps.sort((a,b) => b.gap - a.gap).map(g => `
     <div class="gap-item">
       <div class="gap-label">${g.label}</div>
       <div class="gap-bar-wrap"><div class="gap-bar" style="width:${Math.max(0,g.gap)/9*100}%"></div></div>
       <div class="gap-val">${g.gap > 0 ? '+'+g.gap : g.gap}</div>
     </div>
   `).join('');
-
   const biggestLabel = document.getElementById('biggestGapLabel');
-  if (maxGap > 0 && maxGapArea) {
-    biggestLabel.textContent = `🎯 가장 큰 갭: ${maxGapArea.label} (갭 +${maxGap})`;
-    biggestLabel.classList.remove('hidden');
-  } else {
-    biggestLabel.classList.add('hidden');
-  }
+  if (maxGap > 0 && maxGapArea) { biggestLabel.textContent = `🎯 가장 큰 갭: ${maxGapArea.label} (갭 +${maxGap})`; biggestLabel.classList.remove('hidden'); }
+  else { biggestLabel.classList.add('hidden'); }
 }
 
-// ========== SCORE INPUT ==========
 function onScore(areaKey, type, val) {
   val = parseInt(val);
   if (!state.scores[areaKey]) state.scores[areaKey] = { current: 5, future: 7 };
   state.scores[areaKey][type] = val;
-  const suffix = type === 'current' ? '_c_val' : '_f_val';
-  document.getElementById(areaKey + suffix).textContent = val;
+  document.getElementById(areaKey + (type === 'current' ? '_c_val' : '_f_val')).textContent = val;
   updateChart();
 }
 
-// ========== CHAR COUNT ==========
 function updateCharCount() {
-  const v = document.getElementById('reasonText').value.length;
-  document.getElementById('charCount').textContent = v;
+  document.getElementById('charCount').textContent = document.getElementById('reasonText').value.length;
 }
 
-// ========== LOCAL SAVE ==========
 function saveLocal() {
-  const data = gatherData();
-  localStorage.setItem('bm_draft_' + state.userName, JSON.stringify(data));
-  const now = new Date().toLocaleTimeString('ko-KR');
-  document.getElementById('saveStatus').textContent = `마지막 저장: ${now}`;
+  localStorage.setItem('bm_draft_' + state.userName, JSON.stringify(gatherData()));
+  document.getElementById('saveStatus').textContent = `마지막 저장: ${new Date().toLocaleTimeString('ko-KR')}`;
   showToast('임시 저장되었습니다.');
 }
 
@@ -548,12 +415,10 @@ function loadLocal() {
     if (data.action3) document.getElementById('action3').value = data.action3;
     if (data.letter) document.getElementById('letter').value = data.letter;
     if (data.email) document.getElementById('email').value = data.email;
-    updateChart();
-    updateCharCount();
+    updateChart(); updateCharCount();
   } catch(e) {}
 }
 
-// ========== GATHER ==========
 function gatherData() {
   return {
     name: state.userName,
@@ -564,43 +429,26 @@ function gatherData() {
     action3: document.getElementById('action3').value,
     letter: document.getElementById('letter').value,
     email: document.getElementById('email').value,
-    submitted_at: new Date().toISOString(),
   };
 }
 
-// ========== SUBMIT ==========
 async function submitAll() {
   if (!state.userName) { showToast('이름을 먼저 입력해주세요.'); return; }
   const data = gatherData();
   try {
-    await insertSubmission({
-      name: data.name,
-      scores: data.scores,
-      reason: data.reason,
-      action1: data.action1,
-      action2: data.action2,
-      action3: data.action3,
-      letter: data.letter,
-      email: data.email,
-    });
+    await insertSubmission({ name: data.name, scores: data.scores, reason: data.reason, action1: data.action1, action2: data.action2, action3: data.action3, letter: data.letter, email: data.email });
     showToast('✅ 제출 완료! 감사합니다.');
     localStorage.removeItem('bm_draft_' + state.userName);
     document.getElementById('saveStatus').textContent = '제출 완료';
-  } catch(e) {
-    showToast('❌ 제출 오류: ' + e.message);
-    console.error(e);
-  }
+  } catch(e) { showToast('❌ 제출 오류: ' + e.message); }
 }
 
-// ========== ENTRY ==========
 function handleEntry() {
   const name = document.getElementById('entryName').value.trim();
   const pw = document.getElementById('entryPw').value.trim();
   const errEl = document.getElementById('entryError');
-
   if (!name) { errEl.textContent = '이름을 입력해주세요.'; errEl.style.display='block'; return; }
   if (pw !== ATTENDEE_PW) { errEl.textContent = '입장 암호가 올바르지 않습니다.'; errEl.style.display='block'; return; }
-
   errEl.style.display = 'none';
   state.userName = name;
   state.isAdmin = false;
@@ -608,24 +456,15 @@ function handleEntry() {
   document.getElementById('entryModal').classList.add('hidden');
   document.getElementById('adminBar').classList.add('hidden');
   document.getElementById('mainContent').style.display = 'block';
-  loadLocal();
-  updateChart();
+  loadLocal(); updateChart();
 }
 
 function changeName() {
   const newName = prompt('새 이름을 입력하세요:');
-  if (newName && newName.trim()) {
-    state.userName = newName.trim();
-    document.getElementById('headerUserName').textContent = state.userName;
-    showToast('이름이 변경되었습니다.');
-  }
+  if (newName && newName.trim()) { state.userName = newName.trim(); document.getElementById('headerUserName').textContent = state.userName; showToast('이름이 변경되었습니다.'); }
 }
 
-// ========== ADMIN (Supabase Auth) ==========
-function showAdminModal() {
-  document.getElementById('adminModal').classList.remove('hidden');
-  document.getElementById('adminEmail').focus();
-}
+function showAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); document.getElementById('adminEmail').focus(); }
 function hideAdminModal() {
   document.getElementById('adminModal').classList.add('hidden');
   document.getElementById('adminEmail').value = '';
@@ -638,44 +477,24 @@ async function handleAdminLogin() {
   const pw = document.getElementById('adminPw').value;
   const errEl = document.getElementById('adminError');
   const btn = document.getElementById('adminLoginBtn');
-
   if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 모두 입력하세요.'; errEl.style.display='block'; return; }
-
-  btn.textContent = '로그인 중...';
-  btn.classList.add('btn-loading');
-  btn.disabled = true;
-  errEl.style.display = 'none';
-
+  btn.textContent = '로그인 중...'; btn.classList.add('btn-loading'); btn.disabled = true; errEl.style.display = 'none';
   try {
     const result = await supabaseAuthSignIn(email, pw);
-    state.adminToken = result.access_token;
-    state.isAdmin = true;
-    state.userName = '관리자';
-
+    state.adminToken = result.access_token; state.isAdmin = true; state.userName = '관리자';
     document.getElementById('headerUserName').textContent = '관리자';
     document.getElementById('adminModal').classList.add('hidden');
     document.getElementById('entryModal').classList.add('hidden');
     document.getElementById('mainContent').style.display = 'block';
     document.getElementById('adminBar').classList.remove('hidden');
-    updateChart();
-    showToast('관리자 모드로 로그인했습니다.');
-  } catch(e) {
-    errEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
-    errEl.style.display = 'block';
-  } finally {
-    btn.textContent = '로그인';
-    btn.classList.remove('btn-loading');
-    btn.disabled = false;
-  }
+    updateChart(); showToast('관리자 모드로 로그인했습니다.');
+  } catch(e) { errEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.'; errEl.style.display = 'block'; }
+  finally { btn.textContent = '로그인'; btn.classList.remove('btn-loading'); btn.disabled = false; }
 }
 
 async function adminLogout() {
-  if (state.adminToken) {
-    await supabaseAuthSignOut(state.adminToken).catch(() => {});
-  }
-  state.isAdmin = false;
-  state.adminToken = null;
-  state.userName = '';
+  if (state.adminToken) await supabaseAuthSignOut(state.adminToken).catch(() => {});
+  state.isAdmin = false; state.adminToken = null; state.userName = '';
   document.getElementById('adminBar').classList.add('hidden');
   document.getElementById('mainContent').style.display = 'none';
   document.getElementById('entryModal').classList.remove('hidden');
@@ -684,14 +503,8 @@ async function adminLogout() {
   showToast('로그아웃 되었습니다.');
 }
 
-// ========== DASHBOARD ==========
-async function openDashboard() {
-  document.getElementById('dashboardOverlay').classList.remove('hidden');
-  await loadDashboard();
-}
-function closeDashboard() {
-  document.getElementById('dashboardOverlay').classList.add('hidden');
-}
+async function openDashboard() { document.getElementById('dashboardOverlay').classList.remove('hidden'); await loadDashboard(); }
+function closeDashboard() { document.getElementById('dashboardOverlay').classList.add('hidden'); }
 
 async function loadDashboard() {
   const list = document.getElementById('submissionList');
@@ -699,57 +512,29 @@ async function loadDashboard() {
   try {
     const submissions = await fetchSubmissions();
     document.getElementById('statTotal').textContent = submissions.length;
-
     if (submissions.length === 0) {
       list.innerHTML = '<div class="empty-state">아직 제출된 데이터가 없습니다.</div>';
       document.getElementById('statAvgCurrent').textContent = '-';
       document.getElementById('statAvgFuture').textContent = '-';
       return;
     }
-
     let totalCurrent = 0, totalFuture = 0, count = 0;
-    submissions.forEach(s => {
-      if (s.scores) {
-        Object.values(s.scores).forEach(sc => {
-          totalCurrent += sc.current || 0;
-          totalFuture += sc.future || 0;
-          count++;
-        });
-      }
-    });
+    submissions.forEach(s => { if (s.scores) { Object.values(s.scores).forEach(sc => { totalCurrent += sc.current || 0; totalFuture += sc.future || 0; count++; }); } });
     document.getElementById('statAvgCurrent').textContent = count ? (totalCurrent/count).toFixed(1) : '-';
     document.getElementById('statAvgFuture').textContent = count ? (totalFuture/count).toFixed(1) : '-';
-
     list.innerHTML = submissions.map(s => {
       const scores = s.scores || {};
-      const scoreBadges = Object.entries(scores).map(([key, val]) => {
-        const area = AREAS.find(a => a.key === key);
-        return `<div class="score-badge">${area?.label || key}: 현재 <strong>${val.current}</strong> → 목표 <strong>${val.future}</strong></div>`;
-      }).join('');
+      const scoreBadges = Object.entries(scores).map(([key, val]) => { const area = AREAS.find(a => a.key === key); return `<div class="score-badge">${area?.label || key}: 현재 <strong>${val.current}</strong> → 목표 <strong>${val.future}</strong></div>`; }).join('');
       const date = s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : '';
-      return `
-        <div class="submission-item">
-          <div class="submission-name">${s.name || '이름없음'} <span>${date}</span></div>
-          <div class="submission-scores">${scoreBadges}</div>
-          ${s.reason ? `<div class="submission-reason">💬 ${s.reason}</div>` : ''}
-          ${s.action1 ? `<div class="submission-actions-text">✅ 실천: ${s.action1} / 기한: ${s.action2 || '-'} / 도움: ${s.action3 || '-'}</div>` : ''}
-        </div>
-      `;
+      return `<div class="submission-item"><div class="submission-name">${s.name || '이름없음'} <span>${date}</span></div><div class="submission-scores">${scoreBadges}</div>${s.reason ? `<div class="submission-reason">💬 ${s.reason}</div>` : ''}${s.action1 ? `<div class="submission-actions-text">✅ 실천: ${s.action1} / 기한: ${s.action2 || '-'} / 도움: ${s.action3 || '-'}</div>` : ''}</div>`;
     }).join('');
-  } catch(e) {
-    list.innerHTML = `<div class="empty-state">오류: ${e.message}</div>`;
-  }
+  } catch(e) { list.innerHTML = `<div class="empty-state">오류: ${e.message}</div>`; }
 }
 
 async function deleteAll() {
   if (!confirm('전체 제출 데이터를 삭제하시겠습니까?')) return;
-  try {
-    await deleteAllSubmissions();
-    showToast('전체 삭제 완료');
-    await loadDashboard();
-  } catch(e) {
-    showToast('삭제 오류: ' + e.message);
-  }
+  try { await deleteAllSubmissions(); showToast('전체 삭제 완료'); await loadDashboard(); }
+  catch(e) { showToast('삭제 오류: ' + e.message); }
 }
 
 async function exportCSV() {
@@ -757,39 +542,19 @@ async function exportCSV() {
     const submissions = await fetchSubmissions();
     if (!submissions.length) { showToast('데이터가 없습니다.'); return; }
     const headers = ['이름', '제출일시', ...AREAS.map(a => a.label+'_현재'), ...AREAS.map(a => a.label+'_목표'), '이유', '실천사항', '기한', '도움요청', '편지', '이메일'];
-    const rows = submissions.map(s => [
-      s.name,
-      s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : '',
-      ...AREAS.map(a => s.scores?.[a.key]?.current ?? ''),
-      ...AREAS.map(a => s.scores?.[a.key]?.future ?? ''),
-      s.reason || '',
-      s.action1 || '',
-      s.action2 || '',
-      s.action3 || '',
-      s.letter || '',
-      s.email || '',
-    ]);
+    const rows = submissions.map(s => [s.name, s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : '', ...AREAS.map(a => s.scores?.[a.key]?.current ?? ''), ...AREAS.map(a => s.scores?.[a.key]?.future ?? ''), s.reason || '', s.action1 || '', s.action2 || '', s.action3 || '', s.letter || '', s.email || '']);
     const csv = '\uFEFF' + [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `제출현황_${new Date().toLocaleDateString('ko-KR')}.csv`;
-    a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `제출현황_${new Date().toLocaleDateString('ko-KR')}.csv`; a.click();
     showToast('CSV 다운로드 완료');
-  } catch(e) {
-    showToast('오류: ' + e.message);
-  }
+  } catch(e) { showToast('오류: ' + e.message); }
 }
 
-// ========== TOAST ==========
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ========== START ==========
 init();
 </script>
 </body>
