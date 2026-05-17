@@ -7,17 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --accent: #f59e0b;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --text-sub: #64748b;
-    --border: #e2e8f0;
-    --success: #10b981;
-    --danger: #ef4444;
-    --radius: 12px;
+    --primary: #2563eb; --primary-dark: #1d4ed8; --accent: #f59e0b;
+    --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --text-sub: #64748b;
+    --border: #e2e8f0; --success: #10b981; --danger: #ef4444; --radius: 12px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -33,7 +25,6 @@
   .btn-primary { background: var(--primary); color: white; }
   .btn-primary:hover { background: var(--primary-dark); }
   .btn-secondary { background: var(--border); color: var(--text); }
-  .btn-secondary:hover { background: #cbd5e1; }
   .error-msg { color: var(--danger); font-size: 0.85rem; margin-bottom: 10px; display: none; }
   header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .header-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
@@ -112,6 +103,7 @@
 </style>
 </head>
 <body>
+
 <div class="modal-overlay" id="entryModal">
   <div class="modal">
     <h3>입장하기</h3>
@@ -127,6 +119,7 @@
     </div>
   </div>
 </div>
+
 <div class="modal-overlay hidden" id="adminModal">
   <div class="modal">
     <h3>관리자 로그인</h3>
@@ -139,6 +132,7 @@
     </div>
   </div>
 </div>
+
 <div class="dashboard-overlay hidden" id="dashboardOverlay">
   <div class="dashboard">
     <div class="dashboard-header">
@@ -157,7 +151,9 @@
     <div class="submission-list" id="submissionList"><div class="empty-state">불러오는 중...</div></div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <header>
   <div class="header-title">분석맵</div>
   <div class="header-user">
@@ -165,6 +161,7 @@
     <button onclick="changeName()">변경</button>
   </div>
 </header>
+
 <main id="mainContent" style="display:none;">
   <div class="admin-bar hidden" id="adminBar">
     <div class="admin-bar-left">🔧 관리자 모드</div>
@@ -227,7 +224,9 @@
     <div class="save-status" id="saveStatus">마지막 저장: 없음</div>
   </div>
 </main>
+
 <footer>© re:Box Consulting · Proprietary · 무단배포금지</footer>
+
 <script>
 const SUPABASE_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
@@ -239,6 +238,7 @@ const AREAS = [
   { key: 'area3', label: '성과 관리', desc: '성과를 측정하고 피드백으로 발전을 이끄는 역량' },
 ];
 let state = { userName: '', isAdmin: false, scores: {} };
+
 async function sbFetch(path, options = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
@@ -250,7 +250,12 @@ async function sbFetch(path, options = {}) {
 async function insertSubmission(data) { return sbFetch('submissions', { method: 'POST', body: JSON.stringify(data), prefer: 'return=minimal', noJson: true }); }
 async function fetchSubmissions() { return sbFetch('submissions?select=*&order=created_at.desc'); }
 async function deleteAllSubmissions() { return sbFetch('submissions?id=gte.0', { method: 'DELETE', noJson: true }); }
-function init() { renderAreas(); initChart(); }
+
+function init() {
+  renderAreas();
+  initChart();
+}
+
 function renderAreas() {
   const container = document.getElementById('areasContainer');
   container.innerHTML = AREAS.map(area => `
@@ -274,6 +279,7 @@ function renderAreas() {
     </div>`).join('');
   AREAS.forEach(a => { state.scores[a.key] = { current: 5, future: 7 }; });
 }
+
 let radarChart;
 function initChart() {
   const ctx = document.getElementById('radarChart').getContext('2d');
@@ -289,12 +295,14 @@ function initChart() {
     options: { responsive: true, scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }, plugins: { legend: { display: false } } }
   });
 }
+
 function updateChart() {
   radarChart.data.datasets[0].data = AREAS.map(a => state.scores[a.key]?.current ?? 5);
   radarChart.data.datasets[1].data = AREAS.map(a => state.scores[a.key]?.future ?? 7);
   radarChart.update();
   updateGap();
 }
+
 function updateGap() {
   const gaps = AREAS.map(a => ({ label: a.label, key: a.key, gap: (state.scores[a.key]?.future ?? 7) - (state.scores[a.key]?.current ?? 5) }));
   const maxGap = Math.max(...gaps.map(g => g.gap));
@@ -305,10 +313,11 @@ function updateGap() {
       <div class="gap-bar-wrap"><div class="gap-bar" style="width:${Math.max(0,g.gap)/9*100}%"></div></div>
       <div class="gap-val">${g.gap > 0 ? '+'+g.gap : g.gap}</div>
     </div>`).join('');
-  const biggestLabel = document.getElementById('biggestGapLabel');
-  if (maxGap > 0 && maxGapArea) { biggestLabel.textContent = `🎯 가장 큰 갭: ${maxGapArea.label} (갭 +${maxGap})`; biggestLabel.classList.remove('hidden'); }
-  else { biggestLabel.classList.add('hidden'); }
+  const bl = document.getElementById('biggestGapLabel');
+  if (maxGap > 0 && maxGapArea) { bl.textContent = `🎯 가장 큰 갭: ${maxGapArea.label} (갭 +${maxGap})`; bl.classList.remove('hidden'); }
+  else { bl.classList.add('hidden'); }
 }
+
 function onScore(areaKey, type, val) {
   val = parseInt(val);
   if (!state.scores[areaKey]) state.scores[areaKey] = { current: 5, future: 7 };
@@ -316,12 +325,15 @@ function onScore(areaKey, type, val) {
   document.getElementById(areaKey + (type === 'current' ? '_c_val' : '_f_val')).textContent = val;
   updateChart();
 }
+
 function updateCharCount() { document.getElementById('charCount').textContent = document.getElementById('reasonText').value.length; }
+
 function saveLocal() {
   localStorage.setItem('bm_draft_' + state.userName, JSON.stringify(gatherData()));
   document.getElementById('saveStatus').textContent = `마지막 저장: ${new Date().toLocaleTimeString('ko-KR')}`;
   showToast('임시 저장되었습니다.');
 }
+
 function loadLocal() {
   const raw = localStorage.getItem('bm_draft_' + state.userName);
   if (!raw) return;
@@ -336,13 +348,18 @@ function loadLocal() {
         document.getElementById(a.key + '_f_val').textContent = data.scores[a.key].future;
       }
     });
-    ['reason','action1','action2','action3','letter','email'].forEach(k => { if (data[k]) document.getElementById(k === 'reason' ? 'reasonText' : k).value = data[k]; });
+    ['reasonText','action1','action2','action3','letter','email'].forEach(k => {
+      const key = k === 'reasonText' ? 'reason' : k;
+      if (data[key]) document.getElementById(k).value = data[key];
+    });
     updateChart(); updateCharCount();
   } catch(e) {}
 }
+
 function gatherData() {
   return { name: state.userName, scores: JSON.parse(JSON.stringify(state.scores)), reason: document.getElementById('reasonText').value, action1: document.getElementById('action1').value, action2: document.getElementById('action2').value, action3: document.getElementById('action3').value, letter: document.getElementById('letter').value, email: document.getElementById('email').value };
 }
+
 async function submitAll() {
   if (!state.userName) { showToast('이름을 먼저 입력해주세요.'); return; }
   try {
@@ -352,6 +369,7 @@ async function submitAll() {
     document.getElementById('saveStatus').textContent = '제출 완료';
   } catch(e) { showToast('❌ 제출 오류: ' + e.message); }
 }
+
 function handleEntry() {
   const name = document.getElementById('entryName').value.trim();
   const pw = document.getElementById('entryPw').value.trim();
@@ -365,12 +383,15 @@ function handleEntry() {
   document.getElementById('mainContent').style.display = 'block';
   loadLocal(); updateChart();
 }
+
 function changeName() {
   const n = prompt('새 이름을 입력하세요:');
   if (n && n.trim()) { state.userName = n.trim(); document.getElementById('headerUserName').textContent = state.userName; showToast('이름이 변경되었습니다.'); }
 }
+
 function showAdminModal() { document.getElementById('adminModal').classList.remove('hidden'); }
 function hideAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
+
 function handleAdminLogin() {
   const pw = document.getElementById('adminPw').value;
   const errEl = document.getElementById('adminError');
@@ -384,9 +405,12 @@ function handleAdminLogin() {
   document.getElementById('adminBar').classList.remove('hidden');
   updateChart(); showToast('관리자 모드로 로그인했습니다.');
 }
+
 function adminLogout() { state.isAdmin = false; document.getElementById('adminBar').classList.add('hidden'); showToast('로그아웃 되었습니다.'); }
+
 async function openDashboard() { document.getElementById('dashboardOverlay').classList.remove('hidden'); await loadDashboard(); }
 function closeDashboard() { document.getElementById('dashboardOverlay').classList.add('hidden'); }
+
 async function loadDashboard() {
   const list = document.getElementById('submissionList');
   list.innerHTML = '<div class="empty-state">불러오는 중...</div>';
@@ -394,32 +418,36 @@ async function loadDashboard() {
     const submissions = await fetchSubmissions();
     document.getElementById('statTotal').textContent = submissions.length;
     if (!submissions.length) { list.innerHTML = '<div class="empty-state">아직 제출된 데이터가 없습니다.</div>'; document.getElementById('statAvgCurrent').textContent = '-'; document.getElementById('statAvgFuture').textContent = '-'; return; }
-    let tc = 0, tf = 0, cnt = 0;
-    submissions.forEach(s => { if (s.scores) Object.values(s.scores).forEach(sc => { tc += sc.current||0; tf += sc.future||0; cnt++; }); });
+    let tc=0, tf=0, cnt=0;
+    submissions.forEach(s => { if (s.scores) Object.values(s.scores).forEach(sc => { tc+=sc.current||0; tf+=sc.future||0; cnt++; }); });
     document.getElementById('statAvgCurrent').textContent = cnt ? (tc/cnt).toFixed(1) : '-';
     document.getElementById('statAvgFuture').textContent = cnt ? (tf/cnt).toFixed(1) : '-';
     list.innerHTML = submissions.map(s => {
-      const scoreBadges = Object.entries(s.scores||{}).map(([key,val]) => { const area = AREAS.find(a=>a.key===key); return `<div class="score-badge">${area?.label||key}: 현재 <strong>${val.current}</strong> → 목표 <strong>${val.future}</strong></div>`; }).join('');
-      return `<div class="submission-item"><div class="submission-name">${s.name||'이름없음'} <span>${s.created_at ? new Date(s.created_at).toLocaleString('ko-KR') : ''}</span></div><div class="submission-scores">${scoreBadges}</div>${s.reason?`<div class="submission-reason">💬 ${s.reason}</div>`:''} ${s.action1?`<div class="submission-actions-text">✅ 실천: ${s.action1} / 기한: ${s.action2||'-'} / 도움: ${s.action3||'-'}</div>`:''}</div>`;
+      const badges = Object.entries(s.scores||{}).map(([k,v]) => { const a=AREAS.find(x=>x.key===k); return `<div class="score-badge">${a?.label||k}: 현재 <strong>${v.current}</strong> → 목표 <strong>${v.future}</strong></div>`; }).join('');
+      return `<div class="submission-item"><div class="submission-name">${s.name||'이름없음'} <span>${s.created_at?new Date(s.created_at).toLocaleString('ko-KR'):''}</span></div><div class="submission-scores">${badges}</div>${s.reason?`<div class="submission-reason">💬 ${s.reason}</div>`:''} ${s.action1?`<div class="submission-actions-text">✅ 실천: ${s.action1} / 기한: ${s.action2||'-'} / 도움: ${s.action3||'-'}</div>`:''}</div>`;
     }).join('');
   } catch(e) { list.innerHTML = `<div class="empty-state">오류: ${e.message}</div>`; }
 }
+
 async function deleteAll() {
   if (!confirm('전체 삭제하시겠습니까?')) return;
   try { await deleteAllSubmissions(); showToast('전체 삭제 완료'); await loadDashboard(); } catch(e) { showToast('오류: '+e.message); }
 }
+
 async function exportCSV() {
   try {
     const submissions = await fetchSubmissions();
     if (!submissions.length) { showToast('데이터가 없습니다.'); return; }
     const headers = ['이름','제출일시',...AREAS.map(a=>a.label+'_현재'),...AREAS.map(a=>a.label+'_목표'),'이유','실천사항','기한','도움요청','편지','이메일'];
     const rows = submissions.map(s => [s.name, s.created_at?new Date(s.created_at).toLocaleString('ko-KR'):'', ...AREAS.map(a=>s.scores?.[a.key]?.current??''), ...AREAS.map(a=>s.scores?.[a.key]?.future??''), s.reason||'', s.action1||'', s.action2||'', s.action3||'', s.letter||'', s.email||'']);
-    const csv = '\uFEFF' + [headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); a.download = `제출현황_${new Date().toLocaleDateString('ko-KR')}.csv`; a.click();
+    const csv = '\uFEFF'+[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})); a.download=`제출현황_${new Date().toLocaleDateString('ko-KR')}.csv`; a.click();
     showToast('CSV 다운로드 완료');
   } catch(e) { showToast('오류: '+e.message); }
 }
+
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
 init();
 </script>
 </body>
