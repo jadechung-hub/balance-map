@@ -568,8 +568,10 @@ function handleEntry() {
 
   errEl.style.display = 'none';
   state.userName = name;
+  state.isAdmin = false;
   document.getElementById('headerUserName').textContent = name;
   document.getElementById('entryModal').classList.add('hidden');
+  document.getElementById('adminBar').classList.add('hidden');
   document.getElementById('mainContent').style.display = 'block';
   loadLocal();
   updateChart();
