@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>조직관리 균형감 점검맵</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --navy: #1e3a5f;
@@ -406,37 +407,21 @@
 
 <script>
   // ========== Supabase 설정 ==========
-  // ⚠️ anon key를 받으면 아래 YOUR_ANON_KEY_HERE 부분만 교체하세요
   const SUPABASE_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
-  const SUPABASE_TABLE = 'submissions';
-
-  async function sbFetch(method, path, body) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-      method,
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
-      },
-      body: body ? JSON.stringify(body) : undefined
-    });
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(err);
-    }
-    const text = await res.text();
-    return text ? JSON.parse(text) : null;
-  }
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // Supabase에서 전체 제출 목록 가져오기
   async function getAllSubmissions() {
     try {
-      const data = await sbFetch('GET', `${SUPABASE_TABLE}?order=submitted_at.desc`);
+      const { data, error } = await supabase
+        .from('submissions')
+        .select('*')
+        .order('submitted_at', { ascending: false });
+      if (error) throw error;
       return data || [];
     } catch (e) {
-      console.warn('Supabase 조회 실패, localStorage fallback:', e);
+      console.warn('Supabase 조회 실패:', e);
       try { return JSON.parse(localStorage.getItem('orgAllSubmissions') || '[]'); } catch { return []; }
     }
   }
@@ -444,7 +429,7 @@
   // Supabase에 제출 데이터 저장
   async function saveSubmission(submission) {
     try {
-      await sbFetch('POST', SUPABASE_TABLE, {
+      const { error } = await supabase.from('submissions').insert({
         submitted_at: submission.submittedAt,
         target_date: submission.targetDate,
         user_name: submission.userName,
@@ -453,9 +438,10 @@
         focus_key: submission.focusKey || '',
         focus_key_name: submission.focusKeyName || ''
       });
+      if (error) throw error;
       return true;
     } catch (e) {
-      console.warn('Supabase 저장 실패, localStorage fallback:', e);
+      console.warn('Supabase 저장 실패:', e);
       const all = JSON.parse(localStorage.getItem('orgAllSubmissions') || '[]');
       all.push(submission);
       localStorage.setItem('orgAllSubmissions', JSON.stringify(all));
@@ -466,7 +452,13 @@
   // Supabase에서 특정 사용자 이름으로 가장 최근 데이터 가져오기
   async function loadUserData(name) {
     try {
-      const data = await sbFetch('GET', `${SUPABASE_TABLE}?user_name=eq.${encodeURIComponent(name)}&order=submitted_at.desc&limit=1`);
+      const { data, error } = await supabase
+        .from('submissions')
+        .select('*')
+        .eq('user_name', name)
+        .order('submitted_at', { ascending: false })
+        .limit(1);
+      if (error) throw error;
       return (data && data.length > 0) ? data[0] : null;
     } catch (e) {
       console.warn('사용자 데이터 로드 실패:', e);
@@ -477,7 +469,8 @@
   // Supabase에서 전체 삭제
   async function clearAllSubmissions() {
     try {
-      await sbFetch('DELETE', `${SUPABASE_TABLE}?id=gte.0`);
+      const { error } = await supabase.from('submissions').delete().gte('id', 0);
+      if (error) throw error;
       return true;
     } catch (e) {
       console.warn('Supabase 삭제 실패:', e);
