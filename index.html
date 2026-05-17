@@ -94,7 +94,7 @@
   .save-status { font-size: 0.82rem; color: var(--text-sub); margin-top: 10px; }
 
   /* ADMIN */
-  .admin-bar { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; gap: 8px; }
+  .admin-bar { background: #fef3c7; border: 1px solid #fcd34d; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   .admin-bar-left { font-size: 0.88rem; font-weight: 600; color: #92400e; }
   .admin-bar-right { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn-admin-sm { padding: 7px 14px; border-radius: 7px; border: none; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
@@ -132,6 +132,9 @@
 
   footer { text-align: center; font-size: 0.78rem; color: var(--text-sub); padding: 20px; }
 
+  /* 로딩 스피너 */
+  .btn-loading { opacity: 0.7; cursor: not-allowed; }
+
   @media (max-width: 480px) {
     .score-row { grid-template-columns: 1fr; }
     .dashboard-stats { grid-template-columns: 1fr 1fr; }
@@ -157,16 +160,17 @@
   </div>
 </div>
 
-<!-- ADMIN LOGIN MODAL -->
+<!-- ADMIN LOGIN MODAL (이메일+비밀번호 → Supabase Auth) -->
 <div class="modal-overlay hidden" id="adminModal">
   <div class="modal">
     <h3>관리자 로그인</h3>
-    <p>관리자 비밀번호를 입력하세요.</p>
-    <input type="password" id="adminPw" placeholder="비밀번호">
-    <div class="error-msg" id="adminError">비밀번호가 올바르지 않습니다.</div>
+    <p>관리자 이메일과 비밀번호를 입력하세요.</p>
+    <input type="email" id="adminEmail" placeholder="이메일" autocomplete="username">
+    <input type="password" id="adminPw" placeholder="비밀번호" autocomplete="current-password">
+    <div class="error-msg" id="adminError">이메일 또는 비밀번호가 올바르지 않습니다.</div>
     <div class="modal-btns">
       <button class="btn btn-secondary" onclick="hideAdminModal()">취소</button>
-      <button class="btn btn-primary" onclick="handleAdminLogin()">로그인</button>
+      <button class="btn btn-primary" id="adminLoginBtn" onclick="handleAdminLogin()">로그인</button>
     </div>
   </div>
 </div>
@@ -219,7 +223,6 @@
   <!-- SECTION 1: SCORE INPUT -->
   <div class="section-card">
     <div class="section-title"><span class="section-num">1</span> 점수 입력</div>
-
     <div id="areasContainer"></div>
   </div>
 
@@ -295,8 +298,8 @@
 // ========== CONFIG ==========
 const SUPABASE_URL = 'https://ujvvmbdftxqqjvqlzkbt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_vxEiCMBnMFcbnd5XIXjp3g_acnzsYfs';
-const ATTENDEE_PW = 'spider'; // 참석자 기본 암호 (관리자가 변경 가능)
-const ADMIN_PW = 'admin1234';    // 관리자 기본 암호
+const ATTENDEE_PW = 'spider'; // 참석자 입장 암호 (필요 시 변경)
+// ⚠️ ADMIN_PW 제거됨 — 관리자 인증은 Supabase Auth(이메일+비밀번호)로 처리
 
 // ========== AREAS CONFIG ==========
 const AREAS = [
@@ -309,26 +312,57 @@ const AREAS = [
 let state = {
   userName: '',
   isAdmin: false,
-  scores: {}, // { area1: { current: 5, future: 7 }, ... }
+  adminToken: null,   // Supabase Auth JWT
+  scores: {},
 };
 
 // ========== SUPABASE HELPERS ==========
+
+// 일반 API 호출 (학습자 데이터 제출 등)
 async function sbFetch(path, options = {}) {
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${state.adminToken || SUPABASE_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': options.prefer || 'return=representation',
+    ...(options.headers || {}),
+  };
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': options.prefer || 'return=representation',
-      ...(options.headers || {}),
-    },
+    headers,
   });
   if (!res.ok) {
     const err = await res.text();
     throw new Error(err);
   }
   return options.noJson ? res : res.json();
+}
+
+// Supabase Auth 로그인 → JWT 반환
+async function supabaseAuthSignIn(email, password) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    throw new Error('인증 실패');
+  }
+  return res.json(); // { access_token, ... }
+}
+
+// Supabase Auth 로그아웃
+async function supabaseAuthSignOut(token) {
+  await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${token}`,
+    },
+  });
 }
 
 async function insertSubmission(data) {
@@ -353,7 +387,6 @@ async function deleteAllSubmissions() {
 
 // ========== INIT ==========
 function init() {
-  // ?new=1 → localStorage 초기화 (새 세션 강제)
   const params = new URLSearchParams(window.location.search);
   if (params.get('new') === '1') {
     Object.keys(localStorage).filter(k => k.startsWith('bm_draft_')).forEach(k => localStorage.removeItem(k));
@@ -362,9 +395,12 @@ function init() {
   renderAreas();
   initChart();
 
-  // 항상 입장 모달부터 표시
   document.getElementById('entryModal').classList.remove('hidden');
   document.getElementById('mainContent').style.display = 'none';
+
+  // Enter 키 지원
+  document.getElementById('entryPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleEntry(); });
+  document.getElementById('adminPw').addEventListener('keydown', e => { if (e.key === 'Enter') handleAdminLogin(); });
 }
 
 function renderAreas() {
@@ -392,7 +428,6 @@ function renderAreas() {
     </div>
   `).join('');
 
-  // init state
   AREAS.forEach(a => {
     state.scores[a.key] = { current: 5, future: 7 };
   });
@@ -586,30 +621,60 @@ function changeName() {
   }
 }
 
-// ========== ADMIN ==========
+// ========== ADMIN (Supabase Auth) ==========
 function showAdminModal() {
   document.getElementById('adminModal').classList.remove('hidden');
+  document.getElementById('adminEmail').focus();
 }
 function hideAdminModal() {
   document.getElementById('adminModal').classList.add('hidden');
+  document.getElementById('adminEmail').value = '';
+  document.getElementById('adminPw').value = '';
+  document.getElementById('adminError').style.display = 'none';
 }
-function handleAdminLogin() {
+
+async function handleAdminLogin() {
+  const email = document.getElementById('adminEmail').value.trim();
   const pw = document.getElementById('adminPw').value;
   const errEl = document.getElementById('adminError');
-  if (pw !== ADMIN_PW) { errEl.style.display='block'; return; }
+  const btn = document.getElementById('adminLoginBtn');
+
+  if (!email || !pw) { errEl.textContent = '이메일과 비밀번호를 모두 입력하세요.'; errEl.style.display='block'; return; }
+
+  btn.textContent = '로그인 중...';
+  btn.classList.add('btn-loading');
+  btn.disabled = true;
   errEl.style.display = 'none';
-  state.isAdmin = true;
-  state.userName = '관리자';
-  document.getElementById('headerUserName').textContent = '관리자';
-  document.getElementById('adminModal').classList.add('hidden');
-  document.getElementById('entryModal').classList.add('hidden');
-  document.getElementById('mainContent').style.display = 'block';
-  document.getElementById('adminBar').classList.remove('hidden');
-  updateChart();
-  showToast('관리자 모드로 로그인했습니다.');
+
+  try {
+    const result = await supabaseAuthSignIn(email, pw);
+    state.adminToken = result.access_token;
+    state.isAdmin = true;
+    state.userName = '관리자';
+
+    document.getElementById('headerUserName').textContent = '관리자';
+    document.getElementById('adminModal').classList.add('hidden');
+    document.getElementById('entryModal').classList.add('hidden');
+    document.getElementById('mainContent').style.display = 'block';
+    document.getElementById('adminBar').classList.remove('hidden');
+    updateChart();
+    showToast('관리자 모드로 로그인했습니다.');
+  } catch(e) {
+    errEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.textContent = '로그인';
+    btn.classList.remove('btn-loading');
+    btn.disabled = false;
+  }
 }
-function adminLogout() {
+
+async function adminLogout() {
+  if (state.adminToken) {
+    await supabaseAuthSignOut(state.adminToken).catch(() => {});
+  }
   state.isAdmin = false;
+  state.adminToken = null;
   state.userName = '';
   document.getElementById('adminBar').classList.add('hidden');
   document.getElementById('mainContent').style.display = 'none';
@@ -642,7 +707,6 @@ async function loadDashboard() {
       return;
     }
 
-    // compute averages
     let totalCurrent = 0, totalFuture = 0, count = 0;
     submissions.forEach(s => {
       if (s.scores) {
